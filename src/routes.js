@@ -6,7 +6,7 @@ import Seller_Signup from './Shopkeeper/signup';
 import Seller_Signin from './Shopkeeper/signin';
 import Signin from './Customer/signin';
 import Signup from './Customer/signup';
-import AddItem from './Shopkeeper/SignedIn/addItem';
+import AddItem from './Shopkeeper/SignedIn/Additems/addItem';
 
 export default class Routes extends React.Component {
     render() {

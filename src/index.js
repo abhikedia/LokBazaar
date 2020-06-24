@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
-import Dashboard from './Shopkeeper/SignedIn/Dashboard'
+import Dashboard from './Shopkeeper/SignedIn/Additems/addItem'
 import Routes from './routes';
 
 ReactDOM.render(

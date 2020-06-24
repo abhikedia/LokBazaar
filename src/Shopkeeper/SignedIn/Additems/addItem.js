@@ -13,15 +13,22 @@ import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
+import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
-import Chart from './Chart';
-import Deposits from './Deposits';
-import Orders from './Orders';
+import { mainListItems, secondaryListItems } from '../listItems';
+import AddressForm from './AddressForm';
+import PaymentForm from './PaymentForm';
+import Review from './Review';
+import Chart from '../Chart';
+import Deposits from '../Deposits';
+import Orders from '../Orders';
 
 function Copyright() {
     return (
@@ -37,6 +44,20 @@ function Copyright() {
 }
 
 const drawerWidth = 240;
+const steps = ['Item Category', 'Add Images', 'Review your order'];
+
+function getStepContent(step) {
+    switch (step) {
+        case 0:
+            return <AddressForm />;
+        case 1:
+            return <PaymentForm />;
+        case 2:
+            return <Review />;
+        default:
+            throw new Error('Unknown step');
+    }
+}
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -59,6 +80,7 @@ const useStyles = makeStyles((theme) => ({
             duration: theme.transitions.duration.leavingScreen,
         }),
     },
+
     appBarShift: {
         marginLeft: drawerWidth,
         width: `calc(100% - ${drawerWidth}px)`,
@@ -66,6 +88,38 @@ const useStyles = makeStyles((theme) => ({
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
         }),
+    },
+    layout: {
+        width: 'auto',
+        marginTop: theme.spacing(15),
+        marginLeft: theme.spacing(2),
+        marginRight: theme.spacing(2),
+        [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
+            width: 600,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+        },
+    },
+    paper: {
+        marginTop: theme.spacing(3),
+        marginBottom: theme.spacing(3),
+        padding: theme.spacing(2),
+        [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
+            marginTop: theme.spacing(6),
+            marginBottom: theme.spacing(6),
+            padding: theme.spacing(3),
+        },
+    },
+    stepper: {
+        padding: theme.spacing(3, 0, 5),
+    },
+    buttons: {
+        display: 'flex',
+        justifyContent: 'flex-end',
+    },
+    button: {
+        marginTop: theme.spacing(3),
+        marginLeft: theme.spacing(1),
     },
     menuButton: {
         marginRight: 36,
@@ -119,6 +173,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AddItem() {
     const classes = useStyles();
+    const [activeStep, setActiveStep] = React.useState(0);
+    const handleNext = () => {
+        setActiveStep(activeStep + 1);
+    };
+
+    const handleBack = () => {
+        setActiveStep(activeStep - 1);
+    };
     const [open, setOpen] = React.useState(true);
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -164,34 +226,55 @@ export default function AddItem() {
                 <Divider />
                 <List>{secondaryListItems}</List>
             </Drawer>
-            <main className={classes.content}>
-                <div className={classes.appBarSpacer} />
-                <Container maxWidth="lg" className={classes.container}>
-                    <Grid container spacing={3}>
-                        {/* Chart */}
-                        <Grid item xs={12} md={8} lg={9}>
-                            <Paper className={fixedHeightPaper}>
-                                <Chart />
-                            </Paper>
-                        </Grid>
-                        {/* Recent Deposits */}
-                        <Grid item xs={12} md={4} lg={3}>
-                            <Paper className={fixedHeightPaper}>
-                                <Deposits />
-                            </Paper>
-                        </Grid>
-                        {/* Recent Orders */}
-                        <Grid item xs={12}>
-                            <Paper className={classes.paper}>
-                                <Orders />
-                            </Paper>
-                        </Grid>
-                    </Grid>
-                    <Box pt={4}>
-                        <Copyright />
-                    </Box>
-                </Container>
-            </main>
+            <React.Fragment>
+                <main className={classes.layout}>
+                    <Paper className={classes.paper}>
+                        <Typography component="h1" variant="h4" align="center">
+                            Item Details
+          </Typography>
+                        <Stepper activeStep={activeStep} className={classes.stepper}>
+                            {steps.map((label) => (
+                                <Step key={label}>
+                                    <StepLabel>{label}</StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+                        <React.Fragment>
+                            {activeStep === steps.length ? (
+                                <React.Fragment>
+                                    <Typography variant="h5" gutterBottom>
+                                        Thank you for your order.
+                </Typography>
+                                    <Typography variant="subtitle1">
+                                        Your order number is #2001539. We have emailed your order confirmation, and will
+                                        send you an update when your order has shipped.
+                </Typography>
+                                </React.Fragment>
+                            ) : (
+                                    <React.Fragment>
+                                        {getStepContent(activeStep)}
+                                        <div className={classes.buttons}>
+                                            {activeStep !== 0 && (
+                                                <Button onClick={handleBack} className={classes.button}>
+                                                    Back
+                                                </Button>
+                                            )}
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={handleNext}
+                                                className={classes.button}
+                                            >
+                                                {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
+                                            </Button>
+                                        </div>
+                                    </React.Fragment>
+                                )}
+                        </React.Fragment>
+                    </Paper>
+                    <Copyright />
+                </main>
+            </React.Fragment>
         </div>
     );
 }
