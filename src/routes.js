@@ -4,6 +4,9 @@ import { Switch, Route } from "react-router";
 import history from './history';
 import Seller_Signup from './Shopkeeper/signup';
 import Seller_Signin from './Shopkeeper/signin';
+import Signin from './Customer/signin';
+import Signup from './Customer/signup';
+import AddItem from './Shopkeeper/SignedIn/addItem';
 
 export default class Routes extends React.Component {
     render() {
@@ -11,8 +14,10 @@ export default class Routes extends React.Component {
             <Router history={history}>
                 <Switch>
                     <Route path="/sellersignup" exact component={Seller_Signup} />
-                    {/* <Route path="/" exact component={Register} /> */}
                     <Route path="/sellersignin" exact component={Seller_Signin} />
+                    <Route path="/sellersignin/additem" exact component={AddItem} />
+                    <Route path="/signin" exact component={Signin} />
+                    <Route path="/" exact component={Signup} />
                 </Switch>
             </Router>
         );

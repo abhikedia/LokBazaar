@@ -95,10 +95,10 @@ class Login extends React.Component {
                             <Grid container>
                                 <Grid item>
                                     <Link variant="body2" onClick={() => {
-                                        history.push('/sellersignup');
+                                        history.push('/');
                                         window.location.reload();
                                     }}>
-                                        {"Don't have an account? Register(Seller)"}
+                                        {"Don't have an account? Register"}
                                     </Link>
                                 </Grid>
                             </Grid>

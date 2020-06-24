@@ -7,6 +7,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import QueueIcon from '@material-ui/icons/Queue';
+import history from "../../history";
 
 export const mainListItems = (
   <div>
@@ -22,7 +23,10 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Orders" />
     </ListItem>
-    <ListItem button>
+    <ListItem button onClick={() => {
+      history.push('/sellersignin/additem');
+      window.location.reload();
+    }}>
       <ListItemIcon>
         <QueueIcon />
       </ListItemIcon>

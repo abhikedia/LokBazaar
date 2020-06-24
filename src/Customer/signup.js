@@ -102,10 +102,10 @@ export default function SignUp() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="regno"
-                                label="Registration Number"
+                                id="phone"
+                                label="Phone Number"
                                 name="regno"
-                                autoComplete="Registration Number"
+                                autoComplete="phone"
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -113,20 +113,29 @@ export default function SignUp() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="category"
-                                label="Shop Category"
-                                name="category"
-                                autoComplete="Category"
+                                id="address"
+                                label="Address"
+                                name="address"
+                                autoComplete="Address"
                             />
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={6}>
                             <TextField
                                 variant="outlined"
                                 fullWidth
-                                name="gst"
-                                label="GST Information"
-                                id="gst"
-                                autoComplete="GSTIN"
+                                name="state"
+                                label="State"
+                                id="state"
+                                autoComplete="State"
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                variant="outlined"
+                                fullWidth
+                                name="pin"
+                                label="PIN"
+                                id="pin"
                             />
                         </Grid>
                     </Grid>
@@ -142,10 +151,10 @@ export default function SignUp() {
                     <Grid container justify="flex-end">
                         <Grid item>
                             <Link variant="body2" onClick={() => {
-                                history.push('/sellersignin');
+                                history.push('/signin');
                                 window.location.reload();
                             }}>
-                                {"Already have an account? Sign in(Seller)"}
+                                {"Already have an account? Sign in"}
                             </Link>
                         </Grid>
                     </Grid>
