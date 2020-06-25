@@ -3,16 +3,12 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
-import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -21,14 +17,10 @@ import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from '../listItems';
-import AddressForm from './AddressForm';
-import PaymentForm from './PaymentForm';
-import Review from './Review';
-import Chart from '../Chart';
-import Deposits from '../Deposits';
-import Orders from '../Orders';
+import ItemDetails from './ItemDetails';
+import ImageForm from './ImageForm';
+import history from '../../../history'
 
 function Copyright() {
     return (
@@ -44,16 +36,14 @@ function Copyright() {
 }
 
 const drawerWidth = 240;
-const steps = ['Item Category', 'Add Images', 'Review your order'];
+const steps = ['Item Category', 'Add Images'];
 
 function getStepContent(step) {
     switch (step) {
         case 0:
-            return <AddressForm />;
+            return <ItemDetails />;
         case 1:
-            return <PaymentForm />;
-        case 2:
-            return <Review />;
+            return <ImageForm />;
         default:
             throw new Error('Unknown step');
     }
@@ -243,13 +233,12 @@ export default function AddItem() {
                             {activeStep === steps.length ? (
                                 <React.Fragment>
                                     <Typography variant="h5" gutterBottom>
-                                        Thank you for your order.
-                </Typography>
-                                    <Typography variant="subtitle1">
-                                        Your order number is #2001539. We have emailed your order confirmation, and will
-                                        send you an update when your order has shipped.
-                </Typography>
-                                </React.Fragment>
+                                        Item Added to the store.
+                                    </Typography>
+                                </React.Fragment>,
+                                history.push('/sellersignin'),
+                                //window.location.reload(1000)
+                                window.setTimeout(function () { window.location.reload() }, 3000)
                             ) : (
                                     <React.Fragment>
                                         {getStepContent(activeStep)}

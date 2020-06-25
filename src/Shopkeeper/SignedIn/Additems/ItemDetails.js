@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function AddressForm() {
+export default function ItemDetails() {
     const classes = useStyles();
     return (
         <Container component="main" maxWidth="xs">

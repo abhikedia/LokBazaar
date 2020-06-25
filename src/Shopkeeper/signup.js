@@ -3,8 +3,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -13,6 +11,9 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import history from '../history';
+
+const swarm = require("swarm-js").at("http://swarm-gateways.net");
+const CryptoJS = require('crypto-js');
 
 function Copyright() {
     return (
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.secondary.main,
     },
     form: {
-        width: '100%', // Fix IE 11 issue.
+        width: '100%',
         marginTop: theme.spacing(3),
     },
     submit: {
@@ -49,7 +50,17 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp() {
     const classes = useStyles();
+    const [fname, setFname] = React.useState(null);
+    const [lname, setLname] = React.useState(null);
+    const [reg, setReg] = React.useState(null);
+    const [category, setCategory] = React.useState(null);
+    const [email, setEmail] = React.useState(null);
+    const [gst, setGst] = React.useState(null);
+    const [hash, setHash] = React.useState(null);
+    const [address, setAddress] = React.useState(null);
+    const [phone, setPhone] = React.useState(null);
 
+    React.useEffect(() => { setHash(null) }, [])
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -59,17 +70,16 @@ export default function SignUp() {
                 </Avatar>
                 <Typography component="h1" variant="h5">
                     Sign up
-        </Typography>
+                </Typography>
                 <form className={classes.form} noValidate>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
-                                autoComplete="fname"
-                                name="firstName"
                                 variant="outlined"
+                                value={fname}
+                                onChange={(e) => setFname(e.target.value)}
                                 required
                                 fullWidth
-                                id="firstName"
                                 label="First Name"
                                 autoFocus
                             />
@@ -78,11 +88,10 @@ export default function SignUp() {
                             <TextField
                                 variant="outlined"
                                 required
+                                value={lname}
+                                onChange={(e) => setLname(e.target.value)}
                                 fullWidth
-                                id="lastName"
                                 label="Last Name"
-                                name="lastName"
-                                autoComplete="lname"
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -90,9 +99,9 @@ export default function SignUp() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 label="Email Address"
-                                name="email"
                                 autoComplete="email"
                             />
                         </Grid>
@@ -102,10 +111,38 @@ export default function SignUp() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="regno"
+                                value={reg}
+                                onChange={(e) => setReg(e.target.value)}
                                 label="Registration Number"
-                                name="regno"
-                                autoComplete="Registration Number"
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                                label="Shop Category"
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                label="Phone Number"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                fullWidth
+                                value={gst}
+                                onChange={(e) => setGst(e.target.value)}
+                                label="GST Information"
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -113,28 +150,53 @@ export default function SignUp() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="category"
-                                label="Shop Category"
-                                name="category"
-                                autoComplete="Category"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                                label="Address"
                             />
                         </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                fullWidth
-                                name="gst"
-                                label="GST Information"
-                                id="gst"
-                                autoComplete="GSTIN"
-                            />
-                        </Grid>
+
                     </Grid>
                     <Button
-                        type="submit"
+                        //type="submit"
                         fullWidth
                         variant="contained"
                         color="primary"
+                        onClick={async () => {
+                            const body = JSON.stringify({
+                                "firstname": fname,
+                                "lastname": lname,
+                                "registration": reg,
+                                "category": category,
+                                "gst": gst,
+                                "email": email,
+                                "phone": phone,
+                                "address": address
+                            });
+
+                            swarm.upload(CryptoJS.AES.encrypt(body, 'SHAttErTechnologies').toString()).then(hash1 => {
+                                
+                                setHash(hash1);
+                            })
+                            console.log(hash)
+                            var url = "http://localhost:4000/addSeller";
+
+                            await fetch(url, {
+                                method: "POST", // or 'PUT'
+                                mode: "cors",
+                                body: JSON.stringify({
+                                    GST: gst,
+                                    seller_qid: hash
+                                }), // data can be `string` or {object}!    
+                                headers: {
+                                    "Content-Type": "application/json"
+                                }
+                            })
+                                .then(res => res.body)
+                                .then(response => console.log("Success:", JSON.stringify(response)))
+                                .catch(error => console.error("Error:", error));
+                        }
+                        }
                         className={classes.submit}
                     >
                         Sign Up
@@ -156,4 +218,7 @@ export default function SignUp() {
             </Box>
         </Container>
     );
+
+
 }
+

@@ -16,6 +16,7 @@ CREATE TABLE `Items` (
 	`item_seller` varchar(255) NOT NULL,
 	`category` varchar(255) NOT NULL,
 	`quantity` INT NOT NULL,
+	`item_price` FLOAT NOT NULL,
 	PRIMARY KEY (`item_id`)
 );
 
