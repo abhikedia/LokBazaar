@@ -7,6 +7,8 @@ import CardActions from '@material-ui/core/CardActions';
 import AddImage from '../../../Assets/addimage.png'
 import Grid from '@material-ui/core/Grid';
 
+const fileUpload = require('fuctbase64');
+
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 250,
@@ -27,6 +29,21 @@ export default function PaymentForm() {
   const [img4, setImg4] = React.useState(AddImage);
   const [img5, setImg5] = React.useState(AddImage);
 
+  // function getDataUrl(img) {
+  //   const canvas = document.createElement('canvas');
+  //   const ctx = canvas.getContext('2d');
+  //   var img = new Image();
+  //   img.onload = function () {
+  //     canvas.width = 250;
+  //     canvas.height = 250;
+  //     ctx.drawImage(img, 0, 0);
+  //   }
+  //   return canvas.toDataURL('image/jpeg');
+  // }
+  const update = async () => {
+    await setImg1(img1 => localStorage.getItem('localhost/img1'));
+  }
+  console.log(img1)
   return (
     <React.Fragment>
       <Grid container>
@@ -39,14 +56,27 @@ export default function PaymentForm() {
             image={img1}
           />
           <CardActions>
-            {/* <Button size="small" color="primary">
-              Add
-        </Button> */}
-            <input type="file" name="file" onChange={(event) => {
+            <input type="file" name="file" accept="image/*" onChange={(event) => {
               console.log(event.target.files[0])
-              setImg1(event.target.files[0]);
+              fileUpload(event)
+                .then((data) => {
+                  //console.log("base64 :", data.base64);
+
+                  localStorage.setItem('img1', data.base64);
+                  //this.processImage(data.base64);
+                })
+              //const dataUrl = getDataUrl(event.target.files[0]);
+              //localStorage.setItem('img1', event.target.files[0]);
+              // var base64Str = localStorage.getItem('img1');
+              // var path = window.location.origin+'/';
+              // console.log(path)
+              // var optionalObj = { 'fileName': 'img11', 'type': 'png' };
+              // var imageInfo = base64ToImage(base64Str,path,optionalObj);
+              // console.log(imageInfo)
+              update();
               console.log(img1)
-            }} />
+            }
+            } />
           </CardActions>
         </Card>
         <Card className={classes.root}>
@@ -56,13 +86,8 @@ export default function PaymentForm() {
           <CardMedia
             className={classes.media}
             image={img2}
-            title="Paella dish"
           />
           <CardActions>
-            {/* <input #file type="file" accept="image/*" (change)="upload(file.files)">
-            <Button #upload (click)="file.click()" size="small" color="primary" >
-              Add
-        </Button> */}
             <input type="file" name="file" />
           </CardActions>
         </Card>

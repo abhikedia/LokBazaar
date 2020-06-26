@@ -59,8 +59,36 @@ export default function SignUp() {
     const [hash, setHash] = React.useState(null);
     const [address, setAddress] = React.useState(null);
     const [phone, setPhone] = React.useState(null);
+    const [updated, setUpdated] = React.useState(0);
 
-    React.useEffect(() => { setHash(null) }, [])
+    React.useEffect(() => {
+        if (updated) {
+            database(hash);
+        }
+    }, [hash]);
+
+    const database = async (e) => {
+        var url = "http://localhost:4000/addSeller";
+        await fetch(url, {
+            method: "POST", // or 'PUT'
+            mode: "cors",
+            body: JSON.stringify({
+                GST: gst,
+                seller_qid: e
+            }), // data can be `string` or {object}!
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(res => res.body)
+            .then(response => {
+                console.log("Success:", JSON.stringify(response))
+                history.push('/sellersignin')
+                window.location.reload()
+            })
+            .catch(error => console.error("Error:", error));
+    }
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -163,6 +191,7 @@ export default function SignUp() {
                         variant="contained"
                         color="primary"
                         onClick={async () => {
+                            setUpdated(1);
                             const body = JSON.stringify({
                                 "firstname": fname,
                                 "lastname": lname,
@@ -173,34 +202,13 @@ export default function SignUp() {
                                 "phone": phone,
                                 "address": address
                             });
-
-                            swarm.upload(CryptoJS.AES.encrypt(body, 'SHAttErTechnologies').toString()).then(hash1 => {
-                                
+                            await swarm.upload(CryptoJS.AES.encrypt(body, 'SHAttErTechnologies').toString()).then(hash1 => {
+                                console.log(hash1)
                                 setHash(hash1);
                             })
-                            console.log(hash)
-                            var url = "http://localhost:4000/addSeller";
-
-                            await fetch(url, {
-                                method: "POST", // or 'PUT'
-                                mode: "cors",
-                                body: JSON.stringify({
-                                    GST: gst,
-                                    seller_qid: hash
-                                }), // data can be `string` or {object}!    
-                                headers: {
-                                    "Content-Type": "application/json"
-                                }
-                            })
-                                .then(res => res.body)
-                                .then(response => console.log("Success:", JSON.stringify(response)))
-                                .catch(error => console.error("Error:", error));
-                        }
-                        }
+                        }}
                         className={classes.submit}
-                    >
-                        Sign Up
-                    </Button>
+                    >Sign Up </Button>
                     <Grid container justify="flex-end">
                         <Grid item>
                             <Link variant="body2" onClick={() => {
@@ -216,7 +224,7 @@ export default function SignUp() {
             <Box mt={5}>
                 <Copyright />
             </Box>
-        </Container>
+        </Container >
     );
 
 

@@ -5,10 +5,10 @@ import Dashboard from './Shopkeeper/SignedIn/Additems/addItem'
 import Routes from './routes';
 
 ReactDOM.render(
-  // <React.StrictMode>
-  //   <Routes />
-  // </React.StrictMode>,
-  <Dashboard/>,
+  <React.StrictMode>
+    <Routes />
+  </React.StrictMode>,
+  // <Dashboard/>,
   document.getElementById('root')
 );
 serviceWorker.unregister();
