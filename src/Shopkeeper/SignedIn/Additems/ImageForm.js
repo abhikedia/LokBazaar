@@ -29,29 +29,30 @@ export default function PaymentForm() {
   const [img4, setImg4] = React.useState(AddImage);
   const [img5, setImg5] = React.useState(AddImage);
 
-  // function getDataUrl(img) {
-  //   const canvas = document.createElement('canvas');
-  //   const ctx = canvas.getContext('2d');
-  //   var img = new Image();
-  //   img.onload = function () {
-  //     canvas.width = 250;
-  //     canvas.height = 250;
-  //     ctx.drawImage(img, 0, 0);
-  //   }
-  //   return canvas.toDataURL('image/jpeg');
-  // }
-  const update = async () => {
-    await setImg1(img1 => localStorage.getItem('localhost/img1'));
-  }
-  console.log(img1)
+  React.useEffect(() => {
+    if (localStorage.getItem('img1') != null)
+      setImg1('data:image/png;base64,' + localStorage.getItem('img1'));
+    if (localStorage.getItem('img2') != null)
+      setImg2('data:image/png;base64,' + localStorage.getItem('img2'));
+    if (localStorage.getItem('img3') != null)
+      setImg3('data:image/png;base64,' + localStorage.getItem('img3'));
+    if (localStorage.getItem('img4') != null)
+      setImg4('data:image/png;base64,' + localStorage.getItem('img4'));
+    if (localStorage.getItem('img5') != null)
+      setImg5('data:image/png;base64,' + localStorage.getItem('img5'));
+
+  }, [img1, img2, img3, img4, img5]);
+
   return (
     <React.Fragment>
       <Grid container>
+
         <Card className={classes.root}>
           <CardHeader
             title="Image 1"
           />
           <CardMedia
+            id="img1"
             className={classes.media}
             image={img1}
           />
@@ -60,84 +61,99 @@ export default function PaymentForm() {
               console.log(event.target.files[0])
               fileUpload(event)
                 .then((data) => {
-                  //console.log("base64 :", data.base64);
-
                   localStorage.setItem('img1', data.base64);
-                  //this.processImage(data.base64);
                 })
-              //const dataUrl = getDataUrl(event.target.files[0]);
-              //localStorage.setItem('img1', event.target.files[0]);
-              // var base64Str = localStorage.getItem('img1');
-              // var path = window.location.origin+'/';
-              // console.log(path)
-              // var optionalObj = { 'fileName': 'img11', 'type': 'png' };
-              // var imageInfo = base64ToImage(base64Str,path,optionalObj);
-              // console.log(imageInfo)
-              update();
-              console.log(img1)
+              setImg1(localStorage.getItem('img1'));
             }
             } />
           </CardActions>
         </Card>
+
         <Card className={classes.root}>
           <CardHeader
             title="Image 2"
           />
           <CardMedia
+            id="img2"
             className={classes.media}
             image={img2}
           />
           <CardActions>
-            <input type="file" name="file" />
+            <input type="file" name="file" accept="image/*" onChange={(event) => {
+              console.log(event.target.files[0])
+              fileUpload(event)
+                .then((data) => {
+                  localStorage.setItem('img2', data.base64);
+                })
+              setImg2(localStorage.getItem('img2'));
+            }
+            } />
           </CardActions>
         </Card>
+
         <Card className={classes.root}>
           <CardHeader
             title="Image 3"
           />
           <CardMedia
+            id="img3"
             className={classes.media}
             image={img3}
-            title="Paella dish"
           />
           <CardActions>
-            {/* <Button size="small" color="primary">
-              Add
-        </Button> */}
-            <input type="file" name="file" />
+            <input type="file" name="file" accept="image/*" onChange={(event) => {
+              console.log(event.target.files[0])
+              fileUpload(event)
+                .then((data) => {
+                  localStorage.setItem('img3', data.base64);
+                })
+              setImg3(localStorage.getItem('img3'));
+            }
+            } />
           </CardActions>
         </Card>
+
         <Card className={classes.root}>
           <CardHeader
             title="Image 4"
           />
           <CardMedia
+            id="img4"
             className={classes.media}
             image={img4}
-            title="Paella dish"
           />
           <CardActions>
-            {/* <Button size="small" color="primary">
-            
-              Add
-        </Button> */}
-            <input type="file" name="file" />
+            <input type="file" name="file" accept="image/*" onChange={(event) => {
+              console.log(event.target.files[0])
+              fileUpload(event)
+                .then((data) => {
+                  localStorage.setItem('img4', data.base64);
+                })
+              setImg4(localStorage.getItem('img4'));
+            }
+            } />
           </CardActions>
         </Card>
+
         <Card className={classes.root}>
           <CardHeader
             title="Image 5"
           />
           <CardMedia
+            id="img5"
             className={classes.media}
             image={img5}
-            title="Paella dish"
           />
           <CardActions>
-            {/* <Button size="small" color="primary">
-              Add
-        </Button> */}
-            <input type="file" name="file" />
+            <input type="file" name="file" accept="image/*" onChange={(event) => {
+              console.log(event.target.files[0])
+              fileUpload(event)
+                .then((data) => {
+                  localStorage.setItem('img5', data.base64);
+                })
+              setImg5(localStorage.getItem('img5'));
+            }
+            } />
           </CardActions>
         </Card>
       </Grid>

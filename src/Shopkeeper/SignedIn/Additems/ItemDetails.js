@@ -32,8 +32,15 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function ItemDetails() {
+export default function ItemDetails(props) {
     const classes = useStyles();
+    const [itemname, setItemname] = React.useState(null);
+    const [category, setCategory] = React.useState(null);
+    const [header, setHeader] = React.useState(null);
+    const [price, setPrice] = React.useState(null);
+    const [quantity, setQuantity] = React.useState(null);
+    const [description, setDescription] = React.useState(null);
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -43,12 +50,14 @@ export default function ItemDetails() {
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={12}>
                             <TextField
-                                autoComplete="iname"
-                                name="itemName"
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="itemName"
+                                value={itemname}
+                                onChange={(e) => {
+                                    setItemname(e.target.value)
+                                    props.parentCallback1(e.target.value);
+                                }}
                                 label="Item Name"
                                 autoFocus
                             />
@@ -57,10 +66,13 @@ export default function ItemDetails() {
                             <TextField
                                 variant="outlined"
                                 required
+                                value={category}
+                                onChange={(e) => {
+                                    setCategory(e.target.value)
+                                    props.parentCallback2(e.target.value)
+                                }}
                                 fullWidth
-                                id="category"
                                 label="Item Category"
-                                name="category"
                             />
                         </Grid>
 
@@ -69,19 +81,25 @@ export default function ItemDetails() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="header"
+                                value={header}
+                                onChange={(e) => {
+                                    setHeader(e.target.value)
+                                    props.parentCallback3(e.target.value)
+                                }}
                                 label="Header to be displayed"
-                                name="header"
                             />
                         </Grid>
                         <Grid item xs={6}>
                             <TextField
                                 variant="outlined"
                                 required
+                                value={price}
+                                onChange={(e) => {
+                                    setPrice(e.target.value)
+                                    props.parentCallback4(e.target.value)
+                                }}
                                 fullWidth
-                                id="price"
                                 label="Item Price"
-                                name="price"
                             />
                         </Grid>
                         <Grid item xs={6}>
@@ -89,9 +107,12 @@ export default function ItemDetails() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="quantity"
+                                value={quantity}
+                                onChange={(e) => {
+                                    setQuantity(e.target.value)
+                                    props.parentCallback5(e.target.value)
+                                }}
                                 label="Item Quantity"
-                                name="quantity"
                             />
                         </Grid>
 
@@ -100,11 +121,14 @@ export default function ItemDetails() {
                                 variant="outlined"
                                 multiline
                                 rows={8}
+                                value={description}
+                                onChange={(e) => {
+                                    setDescription(e.target.value)
+                                    props.parentCallback6(e.target.value)
+                                }}
                                 required
                                 fullWidth
-                                id="description"
                                 label="Item Description"
-                                name="regno"
                             />
                         </Grid>
                     </Grid>

@@ -22,6 +22,8 @@ import ItemDetails from './ItemDetails';
 import ImageForm from './ImageForm';
 import history from '../../../history'
 
+const swarm = require("swarm-js").at("http://swarm-gateways.net");
+
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
@@ -38,16 +40,8 @@ function Copyright() {
 const drawerWidth = 240;
 const steps = ['Item Category', 'Add Images'];
 
-function getStepContent(step) {
-    switch (step) {
-        case 0:
-            return <ItemDetails />;
-        case 1:
-            return <ImageForm />;
-        default:
-            throw new Error('Unknown step');
-    }
-}
+
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -161,8 +155,61 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+// const uploadImages = async () => {
+//     const body = JSON.stringify({
+//         "img1": 'data:image/png;base64,' + localStorage.getItem('img1'),
+//         "img2": 'data:image/png;base64,' + localStorage.getItem('img1'),
+//         "img3": 'data:image/png;base64,' + localStorage.getItem('img1'),
+//         "img4": 'data:image/png;base64,' + localStorage.getItem('img1'),
+//         "img5": 'data:image/png;base64,' + localStorage.getItem('img1'),
+//     });
+//     await swarm.upload(body).then(hash1 => {
+//         console.log(hash1)
+//         console.log(itemname)
+//         console.log(category)
+//         console.log(header)
+//         console.log(price)
+//         console.log(quantity)
+//         console.log(description)
+
+//         // var url = "http://localhost:4000/addItem";
+//         // await fetch(url, {
+//         //     method: "POST", // or 'PUT'
+//         //     mode: "cors",
+//         //     body: JSON.stringify({
+//         //         item_id: ,
+//         //         item_name:,
+//         //         item_seller: ,
+//         //         category:,
+//         //         quantity:,
+//         //         item_price:,
+//         //         image_hash:hash1,
+//         //         description:
+//         //     }), // data can be `string` or {object}!
+//         //     headers: {
+//         //         "Content-Type": "application/json"
+//         //     }
+//         // })
+//         //     .then(res => res.body)
+//         //     .then(response => {
+//         //         console.log("Success:", JSON.stringify(response))
+//         //         history.push('/sellersignin')
+//         //         window.location.reload()
+//         //     })
+//         //     .catch(error => console.error("Error:", error));
+//     })
+//     localStorage.clear();
+// }
+
 export default function AddItem() {
     const classes = useStyles();
+    const [itemname, setItemname] = React.useState(null);
+    const [category, setCategory] = React.useState(null);
+    const [header, setHeader] = React.useState(null);
+    const [price, setPrice] = React.useState(null);
+    const [quantity, setQuantity] = React.useState(null);
+    const [description, setDescription] = React.useState(null);
+
     const [activeStep, setActiveStep] = React.useState(0);
     const handleNext = () => {
         setActiveStep(activeStep + 1);
@@ -179,6 +226,88 @@ export default function AddItem() {
         setOpen(false);
     };
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+    const uploadImages = async () => {
+        const body = JSON.stringify({
+            "img1": 'data:image/png;base64,' + localStorage.getItem('img1'),
+            "img2": 'data:image/png;base64,' + localStorage.getItem('img1'),
+            "img3": 'data:image/png;base64,' + localStorage.getItem('img1'),
+            "img4": 'data:image/png;base64,' + localStorage.getItem('img1'),
+            "img5": 'data:image/png;base64,' + localStorage.getItem('img1'),
+        });
+        await swarm.upload(body).then(hash1 => {
+            console.log(hash1)
+            console.log(itemname)
+            console.log(category)
+            console.log(header)
+            console.log(price)
+            console.log(quantity)
+            console.log(description)
+
+            var url = "http://localhost:4000/addItem";
+            await fetch(url, {
+                method: "POST", // or 'PUT'
+                mode: "cors",
+                body: JSON.stringify({
+                    //item_id: ,
+                    item_name: itemname,
+                    //item_seller: ,
+                    category:category,
+                    quantity:quantity,
+                    item_price:price,
+                    image_hash:hash1,
+                    description:description,
+                    header:header
+                }), // data can be `string` or {object}!
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(res => res.body)
+                .then(response => {
+                    console.log("Success:", JSON.stringify(response))
+                    history.push('/sellersignin')
+                    window.location.reload()
+                })
+                .catch(error => console.error("Error:", error));
+        })
+        localStorage.clear();
+    }
+
+    function getStepContent(step) {
+        switch (step) {
+            case 0:
+                return <ItemDetails parentCallback1={callbackFunction1}
+                    parentCallback2={callbackFunction2}
+                    parentCallback3={callbackFunction3}
+                    parentCallback4={callbackFunction4}
+                    parentCallback5={callbackFunction5}
+                    parentCallback6={callbackFunction6} />;
+            case 1:
+                return <ImageForm />;
+            default:
+                throw new Error('Unknown step');
+        }
+    }
+
+    const callbackFunction1 = (childData) => {
+        setItemname(childData);
+    }
+    const callbackFunction2 = (childData) => {
+        setCategory(childData);
+    }
+    const callbackFunction3 = (childData) => {
+        setHeader(childData);
+    }
+    const callbackFunction4 = (childData) => {
+        setPrice(childData);
+    }
+    const callbackFunction5 = (childData) => {
+        setQuantity(childData);
+    }
+    const callbackFunction6 = (childData) => {
+        setDescription(childData);
+    }
 
     return (
         <div className={classes.root}>
@@ -231,14 +360,16 @@ export default function AddItem() {
                         </Stepper>
                         <React.Fragment>
                             {activeStep === steps.length ? (
+                                uploadImages(),
                                 <React.Fragment>
                                     <Typography variant="h5" gutterBottom>
                                         Item Added to the store.
                                     </Typography>
-                                </React.Fragment>,
-                                history.push('/sellersignin'),
-                                //window.location.reload(1000)
-                                window.setTimeout(function () { window.location.reload() }, 3000)
+                                </React.Fragment>
+
+                                // history.push('/sellersignin'),
+                                // uploadImages(),
+                                // window.setTimeout(function () { window.location.reload() }, 3000)
                             ) : (
                                     <React.Fragment>
                                         {getStepContent(activeStep)}
@@ -254,7 +385,7 @@ export default function AddItem() {
                                                 onClick={handleNext}
                                                 className={classes.button}
                                             >
-                                                {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
+                                                {activeStep === steps.length - 1 ? 'Add' : 'Next'}
                                             </Button>
                                         </div>
                                     </React.Fragment>

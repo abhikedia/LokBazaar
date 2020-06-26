@@ -29,7 +29,6 @@ app.listen(PORT, () => {
 
 app.post("/addSeller", function (req, res) {
     var postData = req.body;
-    console.log("execute");
     console.log(postData, res);
     connection.query("INSERT INTO Seller SET ?", postData, function (
         error,
@@ -41,15 +40,28 @@ app.post("/addSeller", function (req, res) {
     });
 });
 
-// app.get("/getCount/", function (req, res) {
-//     connection.query(
-//         "select id from Bookings order by id DESC LIMIT 1",
-//         [req.params.vr_id],
-//         function (err, results) {
-//             err ? res.send(err) : res.json({ data: results });
-//         }
-//     );
-// });
+app.post("/addItem", function (req, res) {
+    var postData = req.body;
+    console.log(postData, res);
+    connection.query("INSERT INTO Items SET ?", postData, function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.end(JSON.stringify(results));
+    });
+});
+
+app.get("/getCount/", function (req, res) {
+    connection.query(
+        "select item_id from Items order by id DESC LIMIT 1",
+        [req.params.vr_id],
+        function (err, results) {
+            err ? res.send(err) : res.json({ data: results });
+        }
+    );
+});
 
 // app.get("/getBookings/:add", function (req, res) {
 //     connection.query(
