@@ -9,7 +9,17 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import history from '../history';
+import Portis from '@portis/web3';
+import Web3 from 'web3';
+import contract from '../Contract/abi.js';
 
+const Node = {
+    nodeUrl: 'https://testnetv3.matic.network',
+    chainId: 3,
+};
+
+const portis = new Portis('af9218a6-9a1a-475b-95d3-40c96cb81b80', Node);
+const web3 = new Web3(portis.provider);
 
 const styles = theme => ({
     root: {
@@ -35,7 +45,7 @@ const styles = theme => ({
         backgroundColor: theme.palette.secondary.main,
     },
     form: {
-        width: '100%', // Fix IE 11 issue.
+        width: '100%',
         marginTop: theme.spacing(1),
     },
     submit: {
@@ -47,26 +57,28 @@ class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            wallet: '',
-            contract_instance: ''
+            eth_address: ''
         }
     }
 
-
-    checkLogin = async () => {
-        // const address = await tezbridge.request({ method: 'get_source' });
-        // this.setState({
-        //     wallet: address
-        // })
-        // const storage = await this.state.contract_instance.storage();
-        // console.log(storage.get(this.state.wallet));
-        // if (storage.get(this.state.wallet) === undefined)
-        //     alert("User Not Registered, Please Register")
-        // else {
-        //     history.push('/loggedin', { address: this.state.wallet });
-        //     window.location.reload();
-        // }
+    checkLogin = async event => {
+        event.preventDefault();
+        await web3.eth.getAccounts()
+            .then((accounts) => {
+                this.setState({
+                    eth_address: accounts[0]
+                })
+            })
+        console.log(this.state.eth_address);
+        var bool = await contract.methods.sellerRegistrationCheck().call({ from: this.state.eth_address });
+        if (!bool)
+            alert("User not registered!");
+        else {
+            history.push('/sellersignin/dashboard', { address: this.state.eth_address });
+            window.location.reload();
+        }
     }
+
     render() {
         const { classes } = this.props;
 

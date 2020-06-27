@@ -21,6 +21,16 @@ import { mainListItems, secondaryListItems } from '../listItems';
 import ItemDetails from './ItemDetails';
 import ImageForm from './ImageForm';
 import history from '../../../history'
+import Portis from '@portis/web3';
+import Web3 from 'web3';
+
+const Node = {
+    nodeUrl: 'https://testnetv3.matic.network',
+    chainId: 3,
+};
+
+const portis = new Portis('af9218a6-9a1a-475b-95d3-40c96cb81b80', Node);
+const web3 = new Web3(portis.provider);
 
 const swarm = require("swarm-js").at("http://swarm-gateways.net");
 
@@ -155,54 +165,38 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-// const uploadImages = async () => {
-//     const body = JSON.stringify({
-//         "img1": 'data:image/png;base64,' + localStorage.getItem('img1'),
-//         "img2": 'data:image/png;base64,' + localStorage.getItem('img1'),
-//         "img3": 'data:image/png;base64,' + localStorage.getItem('img1'),
-//         "img4": 'data:image/png;base64,' + localStorage.getItem('img1'),
-//         "img5": 'data:image/png;base64,' + localStorage.getItem('img1'),
-//     });
-//     await swarm.upload(body).then(hash1 => {
-//         console.log(hash1)
-//         console.log(itemname)
-//         console.log(category)
-//         console.log(header)
-//         console.log(price)
-//         console.log(quantity)
-//         console.log(description)
-
-//         // var url = "http://localhost:4000/addItem";
-//         // await fetch(url, {
-//         //     method: "POST", // or 'PUT'
-//         //     mode: "cors",
-//         //     body: JSON.stringify({
-//         //         item_id: ,
-//         //         item_name:,
-//         //         item_seller: ,
-//         //         category:,
-//         //         quantity:,
-//         //         item_price:,
-//         //         image_hash:hash1,
-//         //         description:
-//         //     }), // data can be `string` or {object}!
-//         //     headers: {
-//         //         "Content-Type": "application/json"
-//         //     }
-//         // })
-//         //     .then(res => res.body)
-//         //     .then(response => {
-//         //         console.log("Success:", JSON.stringify(response))
-//         //         history.push('/sellersignin')
-//         //         window.location.reload()
-//         //     })
-//         //     .catch(error => console.error("Error:", error));
-//     })
-//     localStorage.clear();
-// }
 
 export default function AddItem() {
+    React.useEffect(() => {
+        (async () => {
+            web3.eth.getAccounts()
+                .then((accounts) => {
+                    setEthAddress(accounts[0]);
+                    console.log(accounts[0])
+                })
+        })();
+    });
+
+    React.useEffect(() => {
+        (async () => {
+            var url = "http://localhost:4000/getCount";
+            await fetch(url)
+                .then(response => response.json())
+                .then(response => {
+                    if (response.data.length === 0)
+                        setCount(0)
+                    else
+                        setCount(response.data[0].item_id);
+                })
+                .catch(err => console.log(err));
+
+            console.log(count);
+        })();
+    });
+
     const classes = useStyles();
+    const [count, setCount] = React.useState(null);
+    const [eth_address, setEthAddress] = React.useState(null);
     const [itemname, setItemname] = React.useState(null);
     const [category, setCategory] = React.useState(null);
     const [header, setHeader] = React.useState(null);
@@ -227,51 +221,58 @@ export default function AddItem() {
     };
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
-    const uploadImages = async () => {
-        const body = JSON.stringify({
-            "img1": 'data:image/png;base64,' + localStorage.getItem('img1'),
-            "img2": 'data:image/png;base64,' + localStorage.getItem('img1'),
-            "img3": 'data:image/png;base64,' + localStorage.getItem('img1'),
-            "img4": 'data:image/png;base64,' + localStorage.getItem('img1'),
-            "img5": 'data:image/png;base64,' + localStorage.getItem('img1'),
-        });
-        await swarm.upload(body).then(async hash1 => {
-            console.log(hash1)
-            console.log(itemname)
-            console.log(category)
-            console.log(header)
-            console.log(price)
-            console.log(quantity)
-            console.log(description)
+    const uploadImages = async (e) => {
+        e.preventDefault();
+        if (activeStep === steps.length - 1) {
+            const body = JSON.stringify({
+                "img1": 'data:image/png;base64,' + localStorage.getItem('img1'),
+                "img2": 'data:image/png;base64,' + localStorage.getItem('img1'),
+                "img3": 'data:image/png;base64,' + localStorage.getItem('img1'),
+                "img4": 'data:image/png;base64,' + localStorage.getItem('img1'),
+                "img5": 'data:image/png;base64,' + localStorage.getItem('img1'),
+            });
+            await swarm.upload(body).then(async hash1 => {
+                console.log(hash1)
+                console.log(itemname)
+                console.log(category)
+                console.log(header)
+                console.log(price)
+                console.log(quantity)
+                console.log(description)
 
-            var url = "http://localhost:4000/addItem";
-            await fetch(url, {
-                method: "POST", // or 'PUT'
-                mode: "cors",
-                body: JSON.stringify({
-                    //item_id: ,
-                    item_name: itemname,
-                    //item_seller: ,
-                    category:category,
-                    quantity:quantity,
-                    item_price:price,
-                    image_hash:hash1,
-                    description:description,
-                    header:header
-                }), // data can be `string` or {object}!
-                headers: {
-                    "Content-Type": "application/json"
+                var url = "http://localhost:4000/addItem";
+                try {
+                    await fetch(url, {
+                        method: "POST", // or 'PUT'
+                        mode: "cors",
+                        body: JSON.stringify({
+                            item_id: count + 1,
+                            item_name: itemname,
+                            item_seller: eth_address,
+                            category: category,
+                            quantity: quantity,
+                            item_price: price,
+                            image_hash: hash1,
+                            description: description,
+                            header: header
+                        }), // data can be `string` or {object}!
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    })
+                        .then(res => res.body)
+                        .then(response => {
+                            console.log("Success:")
+                        })
+                        .catch(error => console.error("Error:", error));
+                }
+                catch (err) {
+                    alert('Try Again!')
                 }
             })
-                .then(res => res.body)
-                .then(response => {
-                    console.log("Success:", JSON.stringify(response))
-                    history.push('/sellersignin')
-                    window.location.reload()
-                })
-                .catch(error => console.error("Error:", error));
-        })
-        localStorage.clear();
+            localStorage.clear();
+        }
+        handleNext();
     }
 
     function getStepContent(step) {
@@ -360,7 +361,6 @@ export default function AddItem() {
                         </Stepper>
                         <React.Fragment>
                             {activeStep === steps.length ? (
-                                uploadImages(),
                                 <React.Fragment>
                                     <Typography variant="h5" gutterBottom>
                                         Item Added to the store.
@@ -382,7 +382,7 @@ export default function AddItem() {
                                             <Button
                                                 variant="contained"
                                                 color="primary"
-                                                onClick={handleNext}
+                                                onClick={e => uploadImages(e)}
                                                 className={classes.button}
                                             >
                                                 {activeStep === steps.length - 1 ? 'Add' : 'Next'}

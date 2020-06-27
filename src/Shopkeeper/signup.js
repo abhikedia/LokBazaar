@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import history from '../history';
-import Contract from '../abi'
+import Contract from '../Contract/abi.js'
 import Portis from '@portis/web3';
 import Web3 from 'web3';
 

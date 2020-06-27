@@ -86,7 +86,7 @@ export default function ItemDetails(props) {
                                     setHeader(e.target.value)
                                     props.parentCallback3(e.target.value)
                                 }}
-                                label="Header to be displayed"
+                                label="Item Brand"
                             />
                         </Grid>
                         <Grid item xs={6}>

@@ -55,7 +55,7 @@ app.post("/addItem", function (req, res) {
 
 app.get("/getCount/", function (req, res) {
     connection.query(
-        "select item_id from Items order by id DESC LIMIT 1",
+        "select item_id from Items order by item_id DESC LIMIT 1",
         [req.params.vr_id],
         function (err, results) {
             err ? res.send(err) : res.json({ data: results });

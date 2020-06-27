@@ -11,7 +11,10 @@ import history from "../../history";
 
 export const mainListItems = (
   <div>
-    <ListItem button>
+    <ListItem button onClick={() => {
+      history.push('/sellersignin/additem');
+      window.location.reload();
+    }}>
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>

@@ -10,17 +10,15 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
 import Chart from './Chart';
-import Deposits from './Deposits';
+import Balance from './Balance';
 import Orders from './Orders';
 
 function Copyright() {
@@ -117,9 +115,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Dashboard() {
+export default function Dashboard(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
+    const [eth_address, setAddress] = React.useState(null);
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -127,6 +127,11 @@ export default function Dashboard() {
         setOpen(false);
     };
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+    React.useEffect(() => {
+        console.log(props.location.state.address)
+        setAddress(props.location.state.address);
+    })
 
     return (
         <div className={classes.root}>
@@ -177,7 +182,7 @@ export default function Dashboard() {
                         {/* Recent Deposits */}
                         <Grid item xs={12} md={4} lg={3}>
                             <Paper className={fixedHeightPaper}>
-                                <Deposits />
+                                <Balance address={eth_address} />
                             </Paper>
                         </Grid>
                         {/* Recent Orders */}

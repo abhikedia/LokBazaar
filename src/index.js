@@ -4,7 +4,7 @@ import * as serviceWorker from './serviceWorker';
 import Dashboard from './Shopkeeper/SignedIn/Additems/addItem'
 import Search from './Customer/search'
 import Routes from './routes';
-import Portis from './abi'
+import Portis from './Contract/abi'
 
 ReactDOM.render(
   <React.StrictMode>
