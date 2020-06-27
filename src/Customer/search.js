@@ -19,7 +19,16 @@ import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardActions from '@material-ui/core/CardActions';
 import Portis from '@portis/web3';
+import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid';
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
+import Display from './modal';
+import history from '../history'
 import Web3 from 'web3';
 
 const swarm = require("swarm-js").at("http://swarm-gateways.net");
@@ -49,6 +58,28 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 350,
         margin: 15
     },
+    root1: {
+        display: 'flex',
+        maxWidth: 500,
+        //maxHeight: 500,
+        flexWrap: 'wrap',
+        justifyContent: 'space-around',
+        overflow: 'hidden',
+        backgroundColor: theme.palette.background.paper,
+    },
+    gridList: {
+        flexWrap: 'nowrap',
+        maxWidth: '350',
+        // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+        transform: 'translateZ(0)',
+    },
+    title: {
+        color: theme.palette.primary.light,
+    },
+    titleBar: {
+        background:
+            'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+    },
     media: {
         height: 140,
     },
@@ -66,6 +97,12 @@ const useStyles = makeStyles((theme) => ({
             marginLeft: theme.spacing(3),
             width: 'auto',
         },
+    },
+    modal: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        //maxWidth:'350'
     },
     searchIcon: {
         padding: theme.spacing(0, 2),
@@ -105,18 +142,43 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         paddingTop: theme.spacing(1),
         paddingRight: theme.spacing(1)
+    },
+    paper: {
+        backgroundColor: theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
     }
 }));
 
-export default function PrimarySearchAppBar(props) {
+const PrimarySearchAppBar = React.memo(props => {
     const [options, setOptions] = React.useState([]);
+    const [count, setCount] = React.useState(null);
 
     React.useLayoutEffect(() => {
         setOptions(props.location.state.options)
+        localStorage.clear();
     }, []);
 
     React.useLayoutEffect(() => {
         bal();
+    }, []);
+
+    React.useEffect(() => {
+        (async () => {
+            var url = "http://localhost:4000/getOrderCount";
+            await fetch(url)
+                .then(response => response.json())
+                .then(response => {
+                    if (response.data.length === 0)
+                        setCount(0)
+                    else
+                        setCount(response.data[0].item_id);
+                })
+                .catch(err => console.log(err));
+
+            console.log(count);
+        })();
     }, []);
 
     const bal = async event => {
@@ -132,13 +194,24 @@ export default function PrimarySearchAppBar(props) {
     }
 
     const classes = useStyles();
-    const [images, setImages] = React.useState(null);
-
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const [balance, setBal] = React.useState('0.00')
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+    const [open, setOpen] = React.useState(false);
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    // const modalView = (options) => (
+
+    // );
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -224,17 +297,65 @@ export default function PrimarySearchAppBar(props) {
                                     {options.header} {options.item_name}
                                 </Typography>
                                 <Typography variant="body2" color="textSecondary" component="p">
-                                    {options.description}
+                                    Price: {options.item_price} Eth
                                 </Typography>
                             </CardContent>
                         </CardActionArea>
                         <CardActions>
-                            <Button size="small" color="primary">
+                            <Button size="small" color="primary" onClick={async () => {
+                                try {
+                                    await contract.methods.transfer(options.item_seller).send({ from: props.location.state.address, value: options.item_price })
+                                        .on('transactionHash', async function (hash) {
+                                            console.log(hash)
+                                            const block = await web3.eth.getTransaction(hash).blockNumber;
+                                            if (!block) {
+                                                alert('Not enough Eth!')
+                                                window.location.reload()
+                                            }
+                                            else {
+                                                var url = "http://localhost:4000/addOrder";
+                                                try {
+                                                    await fetch(url, {
+                                                        method: "POST", // or 'PUT'
+                                                        mode: "cors",
+                                                        body: JSON.stringify({
+                                                            order_id: count + 1,
+                                                            item_name: options.item_name,
+                                                            item_price: options.item_price,
+                                                            item_seller: options.item_seller,
+                                                        }), // data can be `string` or {object}!
+                                                        headers: {
+                                                            "Content-Type": "application/json"
+                                                        }
+                                                    })
+                                                        .then(res => res.body)
+                                                        .then(response => {
+                                                            console.log("Success:")
+                                                        })
+                                                        .catch(error => console.error("Error:", error));
+                                                }
+                                                catch (err) {
+                                                    alert('Try Again!')
+                                                }
+                                            }
+                                        })
+
+                                }
+                                catch (err) {
+                                    alert('Error');
+                                }
+                            }}>
                                 Buy
                                     </Button>
-                            <Button size="small" color="primary">
+
+                            <Button size="small" color="primary" onClick={() => {
+                                history.push('/signin/home/search/view', { options:options, id:options.item_id });
+                                window.location.reload();
+
+                            }} >
                                 View Details
-                                    </Button>
+                            </Button>
+
                         </CardActions>
                     </Card>
                 ))
@@ -306,4 +427,6 @@ export default function PrimarySearchAppBar(props) {
             </div>
         </div >
     );
-}
+})
+
+export default PrimarySearchAppBar;

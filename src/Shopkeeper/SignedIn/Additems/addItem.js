@@ -226,10 +226,10 @@ export default function AddItem() {
         if (activeStep === steps.length - 1) {
             const body = JSON.stringify({
                 "img1": 'data:image/png;base64,' + localStorage.getItem('img1'),
-                "img2": 'data:image/png;base64,' + localStorage.getItem('img1'),
-                "img3": 'data:image/png;base64,' + localStorage.getItem('img1'),
-                "img4": 'data:image/png;base64,' + localStorage.getItem('img1'),
-                "img5": 'data:image/png;base64,' + localStorage.getItem('img1'),
+                "img2": 'data:image/png;base64,' + localStorage.getItem('img2'),
+                "img3": 'data:image/png;base64,' + localStorage.getItem('img3'),
+                "img4": 'data:image/png;base64,' + localStorage.getItem('img4'),
+                "img5": 'data:image/png;base64,' + localStorage.getItem('img5'),
             });
             await swarm.upload(body).then(async hash1 => {
                 console.log(hash1)

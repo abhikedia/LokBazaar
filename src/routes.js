@@ -10,6 +10,7 @@ import AddItem from './Shopkeeper/SignedIn/Additems/addItem';
 import Dashboard from './Shopkeeper/SignedIn/Dashboard';
 import Home from './Customer/home'
 import Search from './Customer/search'
+import View from './Customer/modal'
 
 export default class Routes extends React.Component {
     render() {
@@ -19,6 +20,7 @@ export default class Routes extends React.Component {
                     <Route path="/sellersignup" exact component={Seller_Signup} />
                     <Route path="/sellersignin" exact component={Seller_Signin} />
                     <Route path="/signin/home" exact component={Home} />
+                    <Route path="/signin/home/search/view" exact component={View} />
                     <Route path="/signin/home/search" exact component={Search} />
                     <Route path="/sellersignin/dashboard" exact component={Dashboard} />
                     <Route path="/sellersignin/additem" exact component={AddItem} />
