@@ -5,25 +5,25 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
-import Badge from '@material-ui/core/Badge';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import Button from '@material-ui/core/Button';
+import CardContent from '@material-ui/core/CardContent';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import MailIcon from '@material-ui/icons/Mail';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import contract from '../Contract/abi'
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardActions from '@material-ui/core/CardActions';
 import Portis from '@portis/web3';
-//import AddImage from '../../../Assets/addimage.png'
 import Grid from '@material-ui/core/Grid';
 import Web3 from 'web3';
 
+const swarm = require("swarm-js").at("http://swarm-gateways.net");
+const CryptoJS = require('crypto-js');
 const Node = {
     nodeUrl: 'https://testnetv3.matic.network',
     chainId: 3,
@@ -46,8 +46,11 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     root: {
-        maxWidth: 250,
+        minWidth: 350,
         margin: 15
+    },
+    media: {
+        height: 140,
     },
     search: {
         position: 'relative',
@@ -106,44 +109,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PrimarySearchAppBar(props) {
+    const [options, setOptions] = React.useState([]);
 
-    React.useEffect(() => {
-        database();
-    },[]);
+    React.useLayoutEffect(() => {
+        setOptions(props.location.state.options)
+    }, []);
 
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         bal();
-    },[]);
-
-    const database = async event => {
-        if (props.location.state.field === 'Item')
-            var url = "http://localhost:4000/getItems/" + props.location.state.search;
-        else
-            var url = "http://localhost:4000/getCategory/" + props.location.state.search;
-
-        function createData(item_id, item_name, item_seller, category, quantity, item_price, image_hash, description, header) {
-            return { item_id, item_name, item_seller, category, quantity, item_price, image_hash, description, header };
-        }
-
-        fetch(url, {
-            method: 'GET'
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Bad response from server");
-            }
-            return response.json();
-        }).then(data => {
-            const row = [];
-            for (var i in data)
-                row.push(createData(data[i].item_id, data[i].item_name, data[i].item_seller, data[i].category, data[i].quantity, data[i].item_price, data[i].image_hash
-                    , data[i].description, data[i].header));
-            setOptions(row)
-        }).catch(err => {
-            console.log('caught it!', err);
-        })
-
-        console.log(options)
-    }
+    }, []);
 
     const bal = async event => {
         try {
@@ -158,7 +132,8 @@ export default function PrimarySearchAppBar(props) {
     }
 
     const classes = useStyles();
-    const [options, setOptions] = React.useState([]);
+    const [images, setImages] = React.useState(null);
+
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const [balance, setBal] = React.useState('0.00')
@@ -209,22 +184,6 @@ export default function PrimarySearchAppBar(props) {
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
-            <MenuItem>
-                <IconButton aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="secondary">
-                        <MailIcon />
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem>
-                <IconButton aria-label="show 11 new notifications" color="inherit">
-                    <Badge badgeContent={11} color="secondary">
-                        <NotificationsIcon />
-                    </Badge>
-                </IconButton>
-                <p>Notifications</p>
-            </MenuItem>
             <MenuItem onClick={handleProfileMenuOpen}>
                 <IconButton
                     aria-label="account of current user"
@@ -237,6 +196,50 @@ export default function PrimarySearchAppBar(props) {
                 <p>Profile</p>
             </MenuItem>
         </Menu>
+    );
+
+    const showResults = (
+        <Grid container>
+            {
+                options.map((options) => (
+                    swarm.download(options.image_hash).then(async array => {
+                        const str = swarm.toString(array);
+                        const answer = JSON.parse(str);
+                        localStorage.setItem(options.image_hash + 'img1', answer.img1);
+                        localStorage.setItem(options.image_hash + 'img2', answer.img2);
+                        localStorage.setItem(options.image_hash + 'img3', answer.img3);
+                        localStorage.setItem(options.image_hash + 'img4', answer.img4);
+                        localStorage.setItem(options.image_hash + 'img5', answer.img5);
+                    }),
+                    < Card className={classes.root} >
+                        <CardActionArea>
+                            <CardMedia
+                                className={classes.media}
+                                //image="/static/images/cards/contemplative-reptile.jpg"
+                                image={localStorage.getItem(options.image_hash + 'img1')}
+                                title="Contemplative Reptile"
+                            />
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="h2">
+                                    {options.header} {options.item_name}
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary" component="p">
+                                    {options.description}
+                                </Typography>
+                            </CardContent>
+                        </CardActionArea>
+                        <CardActions>
+                            <Button size="small" color="primary">
+                                Buy
+                                    </Button>
+                            <Button size="small" color="primary">
+                                View Details
+                                    </Button>
+                        </CardActions>
+                    </Card>
+                ))
+            }
+        </Grid>
     );
 
     return (
@@ -299,35 +302,8 @@ export default function PrimarySearchAppBar(props) {
                 </AppBar>
                 {renderMobileMenu}
                 {renderMenu}
-                <Grid container>
-                    {
-                        options.map((options) => (
-                            <Card className={classes.root}>
-                                <CardHeader
-                                    title="Image 1"
-                                />
-                                <CardMedia
-                                    id="img1"
-                                    className={classes.media}
-                                    image={''}
-                                />
-                                <CardActions>
-                                    <input type="file" name="file" accept="image/*" onChange={(event) => {
-                                        console.log(event.target.files[0])
-                                        // fileUpload(event)
-                                        //     .then((data) => {
-                                        //         localStorage.setItem('img1', data.base64);
-                                        //     })
-                                        // setImg1(localStorage.getItem('img1'));
-                                    }
-                                    } />
-                                </CardActions>
-                            </Card>
-                        ))
-                    }
-                </Grid>
-
+                {showResults}
             </div>
-        </div>
+        </div >
     );
 }

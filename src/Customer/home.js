@@ -64,20 +64,65 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function SimpleContainer(props) {
+    const [updated, setUpdated] = React.useState(0);
+    const [options, setOptions] = React.useState([]);
+    const [move, setMove] = React.useState(0);
 
     React.useEffect(() => {
         (async () => {
             if (updated) {
-                history.push('/signin/home/search', { address: props.location.state.address, field:field, search:search });
+                database(field, search);
+            }
+        })();
+    }, [updated]);
+
+    React.useEffect(() => {
+        (async () => {
+            if (move) {
+                history.push('/signin/home/search', { options: options,address:props.location.state.address });
                 window.location.reload();
             }
         })();
-    });
+    }, [move]);
+
+    const database = async (f, s) => {
+        console.log("Inside database")
+        if (f === 'Item')
+            var url = "http://localhost:4000/getItems/" + s;
+        else
+            var url = "http://localhost:4000/getCategory/" + s;
+
+        function createData(item_id, item_name, item_seller, category, quantity, item_price, image_hash, description, header) {
+            console.log('in')
+            return { item_id, item_name, item_seller, category, quantity, item_price, image_hash, description, header };
+        }
+
+        await fetch(url, {
+            method: 'GET'
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Bad response from server");
+            }
+            return response.json();
+        }).then(data => {
+            const row = [];
+            for (var i in data)
+                row.push(createData(data[i].item_id, data[i].item_name, data[i].item_seller, data[i].category, data[i].quantity, data[i].item_price, data[i].image_hash
+                    , data[i].description, data[i].header));
+            setOptions(row)
+        }).catch(err => {
+            console.log('caught it!', err);
+        })
+
+        setUpdated(0);
+        setMove(1);
+    }
 
     const classes = useStyles();
     const [search, setSearch] = React.useState(null);
     const [field, setField] = React.useState(null);
-    const [updated, setUpdated] = React.useState(0);
+
+
 
     return (
         <Grid container component="main" className={classes.root}>
