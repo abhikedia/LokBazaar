@@ -11,6 +11,17 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import history from '../history';
+import Contract from '../abi'
+import Portis from '@portis/web3';
+import Web3 from 'web3';
+
+const Node = {
+    nodeUrl: 'https://testnetv3.matic.network',
+    chainId: 3,
+};
+
+const portis = new Portis('af9218a6-9a1a-475b-95d3-40c96cb81b80', Node);
+const web3 = new Web3(portis.provider);
 
 const swarm = require("swarm-js").at("http://swarm-gateways.net");
 const CryptoJS = require('crypto-js');
@@ -50,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp() {
     const classes = useStyles();
+    const [eth_address, setEthAddress] = React.useState(null);
     const [fname, setFname] = React.useState(null);
     const [lname, setLname] = React.useState(null);
     const [reg, setReg] = React.useState(null);
@@ -67,14 +79,31 @@ export default function SignUp() {
         }
     }, [hash]);
 
+    React.useEffect(() => {
+        (async () => {
+            web3.eth.getAccounts()
+                .then((accounts) => {
+                    setEthAddress(accounts[0]);
+                    console.log(accounts[0])
+                })
+        })();
+    });
+
     const database = async (e) => {
+
+        var bool = await Contract.methods.customerRegistrationCheck().call({ from: eth_address });
+        if (!bool) {
+            await Contract.methods.sellerSignup('0x'.concat('', Buffer.from(e).toString('hex'))).send({ from: eth_address })
+                .on('transactionHash', function (hash) { console.log(hash) })
+        }
+
         var url = "http://localhost:4000/addSeller";
         await fetch(url, {
             method: "POST", // or 'PUT'
             mode: "cors",
             body: JSON.stringify({
                 GST: gst,
-                seller_qid: e
+                address: eth_address
             }), // data can be `string` or {object}!
             headers: {
                 "Content-Type": "application/json"
@@ -87,6 +116,7 @@ export default function SignUp() {
                 window.location.reload()
             })
             .catch(error => console.error("Error:", error));
+
     }
 
     return (
@@ -171,6 +201,7 @@ export default function SignUp() {
                                 value={gst}
                                 onChange={(e) => setGst(e.target.value)}
                                 label="GST Information"
+                                required
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -186,27 +217,28 @@ export default function SignUp() {
 
                     </Grid>
                     <Button
-                        //type="submit"
                         fullWidth
                         variant="contained"
                         color="primary"
-                        onClick={async () => {
-                            setUpdated(1);
-                            const body = JSON.stringify({
-                                "firstname": fname,
-                                "lastname": lname,
-                                "registration": reg,
-                                "category": category,
-                                "gst": gst,
-                                "email": email,
-                                "phone": phone,
-                                "address": address
-                            });
-                            await swarm.upload(CryptoJS.AES.encrypt(body, 'SHAttErTechnologies').toString()).then(hash1 => {
-                                console.log(hash1)
-                                setHash(hash1);
-                            })
-                        }}
+                        onClick={
+                            async () => {
+                                setUpdated(1);
+                                const body = JSON.stringify({
+                                    "firstname": fname,
+                                    "lastname": lname,
+                                    "registration": reg,
+                                    "category": category,
+                                    "gst": gst,
+                                    "email": email,
+                                    "phone": phone,
+                                    "address": address
+                                });
+                                await swarm.upload(CryptoJS.AES.encrypt(body, 'SHAttErTechnologies').toString()).then(hash1 => {
+                                    console.log(hash1)
+                                    setHash(hash1);
+                                })
+                            }
+                        }
                         className={classes.submit}
                     >Sign Up </Button>
                     <Grid container justify="flex-end">

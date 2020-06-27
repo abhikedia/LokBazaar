@@ -235,7 +235,7 @@ export default function AddItem() {
             "img4": 'data:image/png;base64,' + localStorage.getItem('img1'),
             "img5": 'data:image/png;base64,' + localStorage.getItem('img1'),
         });
-        await swarm.upload(body).then(hash1 => {
+        await swarm.upload(body).then(async hash1 => {
             console.log(hash1)
             console.log(itemname)
             console.log(category)

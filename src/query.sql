@@ -1,13 +1,10 @@
-CREATE TABLE `Seller` (
-	`GST` varchar(255) NOT NULL,
-	`seller_qid` varchar(255) NOT NULL,
-	PRIMARY KEY (`GST`)
-);
+create database LokBazaar;
+use LokBazaar;
 
-CREATE TABLE `Customer` (
-	`customer_id` INT NOT NULL AUTO_INCREMENT,
-	`customer_qid` varchar(255) NOT NULL,
-	PRIMARY KEY (`customer_id`)
+CREATE TABLE `Seller` (
+	`address` varchar(255) NOT NULL,
+	`GST` varchar(255) NOT NULL,
+	PRIMARY KEY (`address`)
 );
 
 CREATE TABLE `Items` (
@@ -17,7 +14,10 @@ CREATE TABLE `Items` (
 	`category` varchar(255) NOT NULL,
 	`quantity` INT NOT NULL,
 	`item_price` FLOAT NOT NULL,
+	`image_hash` varchar(255) NOT NULL,
+	`description` varchar(255) NOT NULL,
+	`header` varchar(255) NOT NULL,
 	PRIMARY KEY (`item_id`)
 );
 
-ALTER TABLE `Items` ADD CONSTRAINT `Items_fk0` FOREIGN KEY (`item_seller`) REFERENCES `Seller`(`GST`);
+ALTER TABLE `Items` ADD CONSTRAINT `Items_fk0` FOREIGN KEY (`item_seller`) REFERENCES `Seller`(`address`);
