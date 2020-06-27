@@ -91,11 +91,13 @@ export default function SignUp() {
 
     const database = async (e) => {
 
-        var bool = await Contract.methods.customerRegistrationCheck().call({ from: eth_address });
+        var bool = await Contract.methods.sellerRegistrationCheck().call({ from: eth_address });
         if (!bool) {
             await Contract.methods.sellerSignup('0x'.concat('', Buffer.from(e).toString('hex'))).send({ from: eth_address })
                 .on('transactionHash', function (hash) { console.log(hash) })
         }
+        else
+            alert('User Already Registered!')
 
         var url = "http://localhost:4000/addSeller";
         await fetch(url, {

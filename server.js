@@ -63,29 +63,22 @@ app.get("/getCount/", function (req, res) {
     );
 });
 
-// app.get("/getBookings/:add", function (req, res) {
-//     connection.query(
-//         "select * from Bookings where user_address=?",
-//         [req.params.add],
-//         function (err, results) {
-//             err ? res.send(err) : res.end(JSON.stringify(results));
-//         }
-//     );
-// });
+app.get("/getItems/:add", function (req, res) {
+    connection.query(
+        "select * from Items where item_name=?",
+        [req.params.add],
+        function (err, results) {
+            err ? res.send(err) : res.end(JSON.stringify(results));
+        }
+    );
+});
 
-// app.get("/getPassengers/:add", function (req, res) {
-//     connection.query(
-//         "select * from Bookings where airline_address=?",
-//         [req.params.add],
-//         function (err, results) {
-//             err ? res.send(err) : res.end(JSON.stringify(results));
-//         }
-//     );
-// });
-
-// app.delete('/deleteBooking/:id', function (req, res) {
-//     connection.query('DELETE FROM `Bookings` WHERE `id`=?', [req.params.id], function (error, results, fields) {
-//         if (error) throw error;
-//         res.end('Record has been deleted!');
-//     });
-// });
+app.get("/getCategory/:add", function (req, res) {
+    connection.query(
+        "select * from Items where category=?",
+        [req.params.add],
+        function (err, results) {
+            err ? res.send(err) : res.end(JSON.stringify(results));
+        }
+    );
+});

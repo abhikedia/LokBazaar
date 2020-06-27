@@ -8,6 +8,8 @@ import Signin from './Customer/signin';
 import Signup from './Customer/signup';
 import AddItem from './Shopkeeper/SignedIn/Additems/addItem';
 import Dashboard from './Shopkeeper/SignedIn/Dashboard';
+import Home from './Customer/home'
+import Search from './Customer/search'
 
 export default class Routes extends React.Component {
     render() {
@@ -16,6 +18,8 @@ export default class Routes extends React.Component {
                 <Switch>
                     <Route path="/sellersignup" exact component={Seller_Signup} />
                     <Route path="/sellersignin" exact component={Seller_Signin} />
+                    <Route path="/signin/home" exact component={Home} />
+                    <Route path="/signin/home/search" exact component={Search} />
                     <Route path="/sellersignin/dashboard" exact component={Dashboard} />
                     <Route path="/sellersignin/additem" exact component={AddItem} />
                     <Route path="/signin" exact component={Signin} />

@@ -3,8 +3,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -13,6 +11,19 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import history from '../history';
+import Portis from '@portis/web3';
+import Web3 from 'web3';
+import Contract from '../Contract/abi'
+
+const Node = {
+    nodeUrl: 'https://testnetv3.matic.network',
+    chainId: 3,
+};
+
+const portis = new Portis('af9218a6-9a1a-475b-95d3-40c96cb81b80', Node);
+const web3 = new Web3(portis.provider);
+const swarm = require("swarm-js").at("http://swarm-gateways.net");
+const CryptoJS = require('crypto-js');
 
 function Copyright() {
     return (
@@ -50,6 +61,49 @@ const useStyles = makeStyles((theme) => ({
 export default function SignUp() {
     const classes = useStyles();
 
+    const [email, setEmail] = React.useState(null);
+    const [pin, setPIN] = React.useState(null);
+    const [fname, setFname] = React.useState(null);
+    const [lname, setLname] = React.useState(null);
+    const [phone, setPhone] = React.useState(null);
+    const [address, setAddress] = React.useState(null);
+    const [state, setState] = React.useState(null);
+    const [hash, setHash] = React.useState(null);
+    const [updated, setUpdated] = React.useState(0);
+    const [eth_address, setEthAddress] = React.useState(null);
+
+    React.useEffect(() => {
+        if (updated) {
+            database(hash);
+        }
+    }, [hash]);
+
+    React.useEffect(() => {
+        (async () => {
+            web3.eth.getAccounts()
+                .then((accounts) => {
+                    setEthAddress(accounts[0]);
+                    console.log(accounts[0])
+                })
+        })();
+    });
+
+    const database = async (e) => {
+
+        var bool = await Contract.methods.customerRegistrationCheck().call({ from: eth_address });
+        if (!bool) {
+            await Contract.methods.customerSignup('0x'.concat('', Buffer.from(e).toString('hex'))).send({ from: eth_address })
+                .on('transactionHash', function (hash) { console.log(hash) })
+                .then(
+                    history.push('/signin/home'),
+                    window.location.reload()
+                )
+        }
+        else
+            alert('User Already Registered!')
+
+    }
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -64,14 +118,13 @@ export default function SignUp() {
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
-                                autoComplete="fname"
-                                name="firstName"
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="firstName"
                                 label="First Name"
                                 autoFocus
+                                value={fname}
+                                onChange={(e) => setFname(e.target.value)}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -79,10 +132,9 @@ export default function SignUp() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="lastName"
                                 label="Last Name"
-                                name="lastName"
-                                autoComplete="lname"
+                                value={lname}
+                                onChange={(e) => setLname(e.target.value)}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -90,10 +142,9 @@ export default function SignUp() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="email"
                                 label="Email Address"
-                                name="email"
-                                autoComplete="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                         </Grid>
 
@@ -102,10 +153,9 @@ export default function SignUp() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="phone"
                                 label="Phone Number"
-                                name="regno"
-                                autoComplete="phone"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -113,38 +163,55 @@ export default function SignUp() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="address"
                                 label="Address"
-                                name="address"
-                                autoComplete="Address"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
                             />
                         </Grid>
                         <Grid item xs={6}>
                             <TextField
                                 variant="outlined"
                                 fullWidth
-                                name="state"
                                 label="State"
-                                id="state"
-                                autoComplete="State"
+                                value={state}
+                                onChange={(e) => setState(e.target.value)}
+                                required
                             />
                         </Grid>
                         <Grid item xs={6}>
                             <TextField
                                 variant="outlined"
                                 fullWidth
-                                name="pin"
                                 label="PIN"
-                                id="pin"
+                                value={pin}
+                                onChange={(e) => setPIN(e.target.value)}
+                                required
                             />
                         </Grid>
                     </Grid>
                     <Button
-                        type="submit"
                         fullWidth
                         variant="contained"
                         color="primary"
                         className={classes.submit}
+                        onClick={
+                            async () => {
+                                setUpdated(1)
+                                const body = JSON.stringify({
+                                    "firstname": fname,
+                                    "lastname": lname,
+                                    "pin": pin,
+                                    "state": state,
+                                    "email": email,
+                                    "phone": phone,
+                                    "address": address
+                                });
+                                await swarm.upload(CryptoJS.AES.encrypt(body, 'SHAttErTechnologies').toString()).then(hash1 => {
+                                    console.log(hash1)
+                                    setHash(hash1);
+                                })
+                            }
+                        }
                     >
                         Sign Up
                     </Button>
