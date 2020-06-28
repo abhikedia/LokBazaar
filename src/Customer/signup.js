@@ -86,16 +86,17 @@ export default function SignUp() {
                     console.log(accounts[0])
                 })
         })();
-    });
+    },[]);
 
     const database = async (e) => {
 
         var bool = await Contract.methods.customerRegistrationCheck().call({ from: eth_address });
         if (!bool) {
+            console.log('New registration')
             await Contract.methods.customerSignup('0x'.concat('', Buffer.from(e).toString('hex'))).send({ from: eth_address })
                 .on('transactionHash', function (hash) { console.log(hash) })
                 .then(
-                    history.push('/signin/home'),
+                    history.push('/signin/'),
                     window.location.reload()
                 )
         }

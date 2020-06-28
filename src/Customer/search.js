@@ -278,40 +278,40 @@ const PrimarySearchAppBar = React.memo(props => {
                                         //     window.location.reload()
                                         // }
                                         // else {
-                                            var url = "http://localhost:4000/addOrder";
-                                            try {
-                                                await fetch(url, {
-                                                    method: "POST", // or 'PUT'
-                                                    mode: "cors",
-                                                    body: JSON.stringify({
-                                                        order_id: count + 1,
-                                                        item_name: options.item_name,
-                                                        item_price: options.item_price,
-                                                        item_seller: options.item_seller,
-                                                        customer: props.location.state.address,
-                                                        tx_hash:hash
-                                                    }), // data can be `string` or {object}!
-                                                    headers: {
-                                                        "Content-Type": "application/json"
-                                                    }
+                                        var url = "http://localhost:4000/addOrder";
+                                        try {
+                                            await fetch(url, {
+                                                method: "POST", // or 'PUT'
+                                                mode: "cors",
+                                                body: JSON.stringify({
+                                                    order_id: count + 1,
+                                                    item_name: options.item_name,
+                                                    item_price: options.item_price,
+                                                    item_seller: options.item_seller,
+                                                    customer: props.location.state.address,
+                                                    tx_hash: hash
+                                                }), // data can be `string` or {object}!
+                                                headers: {
+                                                    "Content-Type": "application/json"
+                                                }
+                                            })
+                                                .then(res => res.body)
+                                                .then(response => {
+                                                    console.log("Success:")
+                                                    window.location.reload()
                                                 })
-                                                    .then(res => res.body)
-                                                    .then(response => {
-                                                        console.log("Success:")
-                                                        window.location.reload()
-                                                    })
-                                                    .catch(error => console.error("Error:", error));
-                                            }
-                                            catch (err) {
-                                                alert('Try Again!')
-                                            }
+                                                .catch(error => console.error("Error:", error));
+                                        }
+                                        catch (err) {
+                                            alert('Try Again!')
+                                        }
                                         // }
                                     })
 
                             }}>Buy</Button>
 
                             <Button size="small" color="primary" onClick={() => {
-                                history.push('/signin/home/search/view', { options: options, id: options.item_id });
+                                history.push('/signin/home/search/view', { options: options, id: options.item_id, address: props.location.state.address });
                                 window.location.reload();
                             }} >View Details </Button>
                         </CardActions>

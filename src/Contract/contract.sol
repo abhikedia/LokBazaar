@@ -51,4 +51,14 @@ contract LokBazaar
         require(msg.value<=msg.sender.balance);
         _receiver.transfer(msg.value);
     }
+    
+    function getSellerqid(address _seller) public view returns(bytes memory)
+    {
+        return seller[_seller].qid;
+    }
+    
+    function getCustomerqid(address _customer) public view returns(bytes memory)
+    {
+        return customer[_customer].qid;
+    }
 }
