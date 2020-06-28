@@ -218,7 +218,7 @@ export default function TransitionsModal(props) {
                                                     "method": "POST",
                                                     "headers": {
                                                         "x-rapidapi-host": "inteltech.p.rapidapi.com",
-                                                        "x-rapidapi-key": "4610a357fbmsh24f9687c37c28dbp14e889jsnac3da36d88ea",
+                                                        "x-rapidapi-key": "",
                                                         "content-type": "application/x-www-form-urlencoded"
                                                     },
                                                     "body": {
