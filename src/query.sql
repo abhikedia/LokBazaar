@@ -26,3 +26,4 @@ CREATE TABLE `Orders` (
 );
 
 ALTER TABLE `Items` ADD CONSTRAINT `Items_fk0` FOREIGN KEY (`item_seller`) REFERENCES `Seller`(`address`);
+ALTER TABLE `Orders` ADD `customer` varchar(255);

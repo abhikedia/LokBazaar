@@ -19,20 +19,11 @@ import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardActions from '@material-ui/core/CardActions';
 import Portis from '@portis/web3';
-import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import Display from './modal';
 import history from '../history'
 import Web3 from 'web3';
 
 const swarm = require("swarm-js").at("http://swarm-gateways.net");
-const CryptoJS = require('crypto-js');
 const Node = {
     nodeUrl: 'https://testnetv3.matic.network',
     chainId: 3,
@@ -57,21 +48,6 @@ const useStyles = makeStyles((theme) => ({
     root: {
         minWidth: 350,
         margin: 15
-    },
-    root1: {
-        display: 'flex',
-        maxWidth: 500,
-        //maxHeight: 500,
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-        overflow: 'hidden',
-        backgroundColor: theme.palette.background.paper,
-    },
-    gridList: {
-        flexWrap: 'nowrap',
-        maxWidth: '350',
-        // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-        transform: 'translateZ(0)',
     },
     title: {
         color: theme.palette.primary.light,
@@ -98,12 +74,6 @@ const useStyles = makeStyles((theme) => ({
             width: 'auto',
         },
     },
-    modal: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        //maxWidth:'350'
-    },
     searchIcon: {
         padding: theme.spacing(0, 2),
         height: '100%',
@@ -118,7 +88,6 @@ const useStyles = makeStyles((theme) => ({
     },
     inputInput: {
         padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
         transition: theme.transitions.create('width'),
         width: '100%',
@@ -199,19 +168,6 @@ const PrimarySearchAppBar = React.memo(props => {
     const [balance, setBal] = React.useState('0.00')
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-    const [open, setOpen] = React.useState(false);
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
-    // const modalView = (options) => (
-
-    // );
-
-    const handleClose = () => {
-        setOpen(false);
-    };
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -230,6 +186,12 @@ const PrimarySearchAppBar = React.memo(props => {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
+    const getOrders = (event) => {
+        event.preventDefault();
+        history.push('/signin/home/search/orders', { address: props.location.state.address });
+        window.location.reload();
+    }
+
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
         <Menu
@@ -243,6 +205,7 @@ const PrimarySearchAppBar = React.memo(props => {
         >
             <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={getOrders}>My Orders</MenuItem>
         </Menu>
     );
 
@@ -288,7 +251,6 @@ const PrimarySearchAppBar = React.memo(props => {
                         <CardActionArea>
                             <CardMedia
                                 className={classes.media}
-                                //image="/static/images/cards/contemplative-reptile.jpg"
                                 image={localStorage.getItem(options.image_hash + 'img1')}
                                 title="Contemplative Reptile"
                             />
@@ -339,23 +301,16 @@ const PrimarySearchAppBar = React.memo(props => {
                                                 }
                                             }
                                         })
-
                                 }
                                 catch (err) {
                                     alert('Error');
                                 }
-                            }}>
-                                Buy
-                                    </Button>
+                            }}>Buy</Button>
 
                             <Button size="small" color="primary" onClick={() => {
-                                history.push('/signin/home/search/view', { options:options, id:options.item_id });
+                                history.push('/signin/home/search/view', { options: options, id: options.item_id });
                                 window.location.reload();
-
-                            }} >
-                                View Details
-                            </Button>
-
+                            }} >View Details </Button>
                         </CardActions>
                     </Card>
                 ))
