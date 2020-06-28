@@ -34,7 +34,7 @@ It Installs all the dependencies. <br/>
 
 ### `mysql -u root -p`
 
-<b>Step 5:</b> Register on https://www.clicksend.com/ and get another API key. Put the username and key in line 266 and 267 respectively.<br/>
+<b>Step 5:</b> Register on https://www.clicksend.com/ and get another API key. Put the username and key in line 228 and 229 respectively along with your RAPID API key in the file 'src/Customer/modal.js'.<br/>
 <b>Step 6:</b> In the project directory, start the server by:
 
 ### `node server.js`
