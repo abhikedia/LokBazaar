@@ -71,8 +71,8 @@ export default function LoggedIn(props) {
     React.useEffect(async () => {
         var url = "http://localhost:4000/getOrders/" + props.location.state.address;
 
-        function createData(id, name, price, seller) {
-            return { id, name, price, seller };
+        function createData(id, name, price, seller, hash) {
+            return { id, name, price, seller, hash };
         }
 
         fetch(url, {
@@ -86,7 +86,7 @@ export default function LoggedIn(props) {
             const row = [];
 
             for (var i in data)
-                row.push(createData(data[i].order_id, data[i].item_name, data[i].item_price, data[i].item_seller))
+                row.push(createData(data[i].order_id, data[i].item_name, data[i].item_price, data[i].item_seller, data[i].tx_hash))
 
             setOptions(row)
         }).catch(err => {
@@ -121,8 +121,9 @@ export default function LoggedIn(props) {
                 <Table className={classes1.table} aria-label="customized table">
                     <TableHead>
                         <TableRow>
-                            <StyledTableCell >Seller's Address</StyledTableCell>
-                            <StyledTableCell align="center">Price</StyledTableCell>
+                            <StyledTableCell align="center">Transaction Hash</StyledTableCell>
+                            <StyledTableCell align="center">Seller's Address</StyledTableCell>
+                            <StyledTableCell align="center">Price(in Eth)</StyledTableCell>
                             <StyledTableCell align="center">Product Name</StyledTableCell>
                         </TableRow>
                     </TableHead>
@@ -130,7 +131,8 @@ export default function LoggedIn(props) {
                         {options.map((options) => (
                             console.log(options.id),
                             <StyledTableRow key={options.id}>
-                                <StyledTableCell align="center" component="th" scope="row">{options.seller}</StyledTableCell>
+                                <StyledTableCell align="center" component="th" scope="row">{options.hash}</StyledTableCell>
+                                <StyledTableCell align="center">{options.seller}</StyledTableCell>
                                 <StyledTableCell align="center">{options.price}</StyledTableCell>
                                 <StyledTableCell align="center">{options.name}</StyledTableCell>
                             </StyledTableRow>

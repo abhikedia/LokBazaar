@@ -265,46 +265,49 @@ const PrimarySearchAppBar = React.memo(props => {
                         </CardActionArea>
                         <CardActions>
                             <Button size="small" color="primary" onClick={async () => {
-                                try {
-                                    await contract.methods.transfer(options.item_seller).send({ from: props.location.state.address, value: options.item_price })
-                                        .on('transactionHash', async function (hash) {
-                                            console.log(hash)
-                                            const block = await web3.eth.getTransaction(hash).blockNumber;
-                                            if (!block) {
-                                                alert('Not enough Eth!')
-                                                window.location.reload()
-                                            }
-                                            else {
-                                                var url = "http://localhost:4000/addOrder";
-                                                try {
-                                                    await fetch(url, {
-                                                        method: "POST", // or 'PUT'
-                                                        mode: "cors",
-                                                        body: JSON.stringify({
-                                                            order_id: count + 1,
-                                                            item_name: options.item_name,
-                                                            item_price: options.item_price,
-                                                            item_seller: options.item_seller,
-                                                        }), // data can be `string` or {object}!
-                                                        headers: {
-                                                            "Content-Type": "application/json"
-                                                        }
+
+                                await contract.methods.transfer(options.item_seller).send({
+                                    from: props.location.state.address,
+                                    value: web3.utils.toWei(options.item_price.toString(), 'ether')
+                                })
+                                    .on('transactionHash', async function (hash) {
+                                        console.log(hash)
+                                        // const block = await web3.eth.getTransaction(hash).blockNumber;
+                                        // if (!block) {
+                                        //     alert('Not enough Eth!')
+                                        //     window.location.reload()
+                                        // }
+                                        // else {
+                                            var url = "http://localhost:4000/addOrder";
+                                            try {
+                                                await fetch(url, {
+                                                    method: "POST", // or 'PUT'
+                                                    mode: "cors",
+                                                    body: JSON.stringify({
+                                                        order_id: count + 1,
+                                                        item_name: options.item_name,
+                                                        item_price: options.item_price,
+                                                        item_seller: options.item_seller,
+                                                        customer: props.location.state.address,
+                                                        tx_hash:hash
+                                                    }), // data can be `string` or {object}!
+                                                    headers: {
+                                                        "Content-Type": "application/json"
+                                                    }
+                                                })
+                                                    .then(res => res.body)
+                                                    .then(response => {
+                                                        console.log("Success:")
+                                                        window.location.reload()
                                                     })
-                                                        .then(res => res.body)
-                                                        .then(response => {
-                                                            console.log("Success:")
-                                                        })
-                                                        .catch(error => console.error("Error:", error));
-                                                }
-                                                catch (err) {
-                                                    alert('Try Again!')
-                                                }
+                                                    .catch(error => console.error("Error:", error));
                                             }
-                                        })
-                                }
-                                catch (err) {
-                                    alert('Error');
-                                }
+                                            catch (err) {
+                                                alert('Try Again!')
+                                            }
+                                        // }
+                                    })
+
                             }}>Buy</Button>
 
                             <Button size="small" color="primary" onClick={() => {

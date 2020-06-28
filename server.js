@@ -108,7 +108,7 @@ app.get("/getCategory/:add", function (req, res) {
 
 app.get("/getOrders/:add", function (req, res) {
     connection.query(
-        "select * from Orders where cutomer=?",
+        "select * from Orders where customer=?",
         [req.params.add],
         function (err, results) {
             err ? res.send(err) : res.end(JSON.stringify(results));

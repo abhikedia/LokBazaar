@@ -1,3 +1,6 @@
+create DATABASE `LokBazaar`;
+use `LokBazaar`;
+
 CREATE TABLE `Seller` (
 	`address` varchar(255) NOT NULL,
 	`GST` varchar(255) NOT NULL,
@@ -22,8 +25,9 @@ CREATE TABLE `Orders` (
 	`item_name` varchar(255) NOT NULL,
 	`item_price` FLOAT NOT NULL,
 	`item_seller` varchar(255) NOT NULL,
+	`customer` varchar(255) NOT NULL,
+	`tx_hash` varchar(255) NOT NULL,
 	PRIMARY KEY (`order_id`)
 );
 
 ALTER TABLE `Items` ADD CONSTRAINT `Items_fk0` FOREIGN KEY (`item_seller`) REFERENCES `Seller`(`address`);
-ALTER TABLE `Orders` ADD `customer` varchar(255);
