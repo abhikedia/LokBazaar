@@ -7,7 +7,7 @@ The traditional centralised marketplace sell their own products and allow author
 <b>3 Delivery:</b> Sometimes the goods can be lost or stolen during shipping.<br/>
 <b>4 Unfair competition:</b> These companies have their own brands, and they show their own products in the search before other sellers, incentivizing them to spend a lot more on advertising.<br/>
 
-This platform gives importance to small shopkeepers who are the real tax payers and are crushed the most when there is some mishap (Example-In COVID 19, all the shops were closed but online deliveries were allowed later).  The customer can make the purchase from the shop who is offering the least price of the product. This way customers will get a variety of price options. Customers can rate seller on the basis of their past experiences. And these ratings will be public to everyone. The advantages of a decentralised marketplace includes-
+This platform gives importance to small shopkeepers who are the real tax payers who are crushed the most when there is some mishap (Example-In COVID 19, all the shops were closed but online deliveries were allowed later).  The customer can make the purchase from the shop who is offering the least price of the product. This way customers will get a variety of price options. Customers can rate seller on the basis of their past experiences. And these ratings will be public to everyone. The advantages of a decentralised marketplace includes-
 
 1. Consumers would buy the most popular and recommended products online.
 2. Companies and brands will save a lot of money because they won't have to advertise much. 
@@ -19,27 +19,31 @@ The products listed by the sellers are not uploaded on blockchain because they d
 
 ## How to run?
 <b>Step 1:</b> Clone the repository and move inside the project directory. Make sure you have node and npm installed. <br/>
-<b>Step 2:</b> In the project directory, run:
+<b>Step 2:</b> Also you should have a portis wallet and some matic eth to perform the transactions(You might need Metamask for importing wallet in portis using private keys). <br/>
+https://www.portis.io/ <br/>
+https://docs.matic.network/docs/develop/getting-started <br/>
+
+<b>Step 3:</b> In the project directory, run:
 
 ### `sudo npm install`
 
 It Installs all the dependencies. <br/>
-<b>Step 3:</b> Set your mysql password as 'password' or set your desired password in file named 'server.js' in line 12.<br/>
+<b>Step 4:</b> Set your mysql password as 'password' or set your desired password in file named 'server.js' in line 12.<br/>
 
 #### Follow this link to know how to set mySQL password- https://stackoverflow.com/questions/16556497/how-to-reset-or-change-the-mysql-root-password
 
-<b>Step 4:</b> In a new terminal, start MySQL server and paste the contents of the file 'query.sql'.<br/>
+<b>Step 5:</b> In a new terminal, start MySQL server and paste the contents of the file 'query.sql'.<br/>
 
 #### To start the mySQL server run- 
 
 ### `mysql -u root -p`
 
-<b>Step 5:</b> Register on https://www.clicksend.com/ and get another API key. Put the username and key in line 228 and 229 respectively along with your RAPID API key in the file 'src/Customer/modal.js'.<br/>
-<b>Step 6:</b> In the project directory, start the server by:
+<b>Step 6:</b> Register on https://www.clicksend.com/ and get another API key. Put the username and key in line 228 and 229 respectively along with your RAPID API key in the file 'src/Customer/modal.js'.<br/>
+<b>Step 7:</b> In the project directory, start the server by:
 
 ### `node server.js`
 
-<b>Step 7:</b> In the project directory, run:
+<b>Step 8:</b> In the project directory, run:
 
 ### `sudo npm start`
 
