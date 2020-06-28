@@ -53,9 +53,32 @@ app.post("/addItem", function (req, res) {
     });
 });
 
+app.post("/addOrder", function (req, res) {
+    var postData = req.body;
+    console.log(postData, res);
+    connection.query("INSERT INTO Orders SET ?", postData, function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.end(JSON.stringify(results));
+    });
+});
+
 app.get("/getCount/", function (req, res) {
     connection.query(
         "select item_id from Items order by item_id DESC LIMIT 1",
+        [req.params.vr_id],
+        function (err, results) {
+            err ? res.send(err) : res.json({ data: results });
+        }
+    );
+});
+
+app.get("/getOrderCount/", function (req, res) {
+    connection.query(
+        "select order_id from Orders order by order_id DESC LIMIT 1",
         [req.params.vr_id],
         function (err, results) {
             err ? res.send(err) : res.json({ data: results });
@@ -76,6 +99,16 @@ app.get("/getItems/:add", function (req, res) {
 app.get("/getCategory/:add", function (req, res) {
     connection.query(
         "select * from Items where category=?",
+        [req.params.add],
+        function (err, results) {
+            err ? res.send(err) : res.end(JSON.stringify(results));
+        }
+    );
+});
+
+app.get("/getOrders/:add", function (req, res) {
+    connection.query(
+        "select * from Orders where customer=?",
         [req.params.add],
         function (err, results) {
             err ? res.send(err) : res.end(JSON.stringify(results));

@@ -20,10 +20,10 @@ import CardMedia from '@material-ui/core/CardMedia';
 import CardActions from '@material-ui/core/CardActions';
 import Portis from '@portis/web3';
 import Grid from '@material-ui/core/Grid';
+import history from '../history'
 import Web3 from 'web3';
 
 const swarm = require("swarm-js").at("http://swarm-gateways.net");
-const CryptoJS = require('crypto-js');
 const Node = {
     nodeUrl: 'https://testnetv3.matic.network',
     chainId: 3,
@@ -48,6 +48,13 @@ const useStyles = makeStyles((theme) => ({
     root: {
         minWidth: 350,
         margin: 15
+    },
+    title: {
+        color: theme.palette.primary.light,
+    },
+    titleBar: {
+        background:
+            'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
     },
     media: {
         height: 140,
@@ -81,7 +88,6 @@ const useStyles = makeStyles((theme) => ({
     },
     inputInput: {
         padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
         transition: theme.transitions.create('width'),
         width: '100%',
@@ -105,18 +111,43 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         paddingTop: theme.spacing(1),
         paddingRight: theme.spacing(1)
+    },
+    paper: {
+        backgroundColor: theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
     }
 }));
 
-export default function PrimarySearchAppBar(props) {
+const PrimarySearchAppBar = React.memo(props => {
     const [options, setOptions] = React.useState([]);
+    const [count, setCount] = React.useState(null);
 
     React.useLayoutEffect(() => {
         setOptions(props.location.state.options)
+        localStorage.clear();
     }, []);
 
     React.useLayoutEffect(() => {
         bal();
+    }, []);
+
+    React.useEffect(() => {
+        (async () => {
+            var url = "http://localhost:4000/getOrderCount";
+            await fetch(url)
+                .then(response => response.json())
+                .then(response => {
+                    if (response.data.length === 0)
+                        setCount(0)
+                    else
+                        setCount(response.data[0].item_id);
+                })
+                .catch(err => console.log(err));
+
+            console.log(count);
+        })();
     }, []);
 
     const bal = async event => {
@@ -132,8 +163,6 @@ export default function PrimarySearchAppBar(props) {
     }
 
     const classes = useStyles();
-    const [images, setImages] = React.useState(null);
-
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const [balance, setBal] = React.useState('0.00')
@@ -157,6 +186,12 @@ export default function PrimarySearchAppBar(props) {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
+    const getOrders = (event) => {
+        event.preventDefault();
+        history.push('/signin/home/search/orders', { address: props.location.state.address });
+        window.location.reload();
+    }
+
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
         <Menu
@@ -170,6 +205,7 @@ export default function PrimarySearchAppBar(props) {
         >
             <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={getOrders}>My Orders</MenuItem>
         </Menu>
     );
 
@@ -215,7 +251,6 @@ export default function PrimarySearchAppBar(props) {
                         <CardActionArea>
                             <CardMedia
                                 className={classes.media}
-                                //image="/static/images/cards/contemplative-reptile.jpg"
                                 image={localStorage.getItem(options.image_hash + 'img1')}
                                 title="Contemplative Reptile"
                             />
@@ -224,17 +259,61 @@ export default function PrimarySearchAppBar(props) {
                                     {options.header} {options.item_name}
                                 </Typography>
                                 <Typography variant="body2" color="textSecondary" component="p">
-                                    {options.description}
+                                    Price: {options.item_price} Eth
                                 </Typography>
                             </CardContent>
                         </CardActionArea>
                         <CardActions>
-                            <Button size="small" color="primary">
-                                Buy
-                                    </Button>
-                            <Button size="small" color="primary">
-                                View Details
-                                    </Button>
+                            <Button size="small" color="primary" onClick={async () => {
+
+                                await contract.methods.transfer(options.item_seller).send({
+                                    from: props.location.state.address,
+                                    value: web3.utils.toWei(options.item_price.toString(), 'ether')
+                                })
+                                    .on('transactionHash', async function (hash) {
+                                        console.log(hash)
+                                        // const block = await web3.eth.getTransaction(hash).blockNumber;
+                                        // if (!block) {
+                                        //     alert('Not enough Eth!')
+                                        //     window.location.reload()
+                                        // }
+                                        // else {
+                                        var url = "http://localhost:4000/addOrder";
+                                        try {
+                                            await fetch(url, {
+                                                method: "POST", // or 'PUT'
+                                                mode: "cors",
+                                                body: JSON.stringify({
+                                                    order_id: count + 1,
+                                                    item_name: options.item_name,
+                                                    item_price: options.item_price,
+                                                    item_seller: options.item_seller,
+                                                    customer: props.location.state.address,
+                                                    tx_hash: hash
+                                                }), // data can be `string` or {object}!
+                                                headers: {
+                                                    "Content-Type": "application/json"
+                                                }
+                                            })
+                                                .then(res => res.body)
+                                                .then(response => {
+                                                    console.log("Success:")
+                                                    window.location.reload()
+                                                })
+                                                .catch(error => console.error("Error:", error));
+                                        }
+                                        catch (err) {
+                                            alert('Try Again!')
+                                        }
+                                        // }
+                                    })
+
+                            }}>Buy</Button>
+
+                            <Button size="small" color="primary" onClick={() => {
+                                history.push('/signin/home/search/view', { options: options, id: options.item_id, address: props.location.state.address });
+                                window.location.reload();
+                            }} >View Details </Button>
                         </CardActions>
                     </Card>
                 ))
@@ -306,4 +385,6 @@ export default function PrimarySearchAppBar(props) {
             </div>
         </div >
     );
-}
+})
+
+export default PrimarySearchAppBar;

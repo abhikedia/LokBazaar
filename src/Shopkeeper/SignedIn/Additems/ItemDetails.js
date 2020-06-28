@@ -132,30 +132,8 @@ export default function ItemDetails(props) {
                             />
                         </Grid>
                     </Grid>
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                    >
-                        Sign Up
-                    </Button>
-                    {/* <Grid container justify="flex-end">
-                        <Grid item>
-                            <Link variant="body2" onClick={() => {
-                                history.push('/signin');
-                                window.location.reload();
-                            }}>
-                                {"Already have an account? Sign in"}
-                            </Link>
-                        </Grid>
-                    </Grid> */}
                 </form>
             </div>
-            {/* <Box mt={5}>
-                <Copyright />
-            </Box> */}
         </Container>
     );
 }
