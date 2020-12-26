@@ -25,11 +25,11 @@ import Portis from '@portis/web3';
 import Web3 from 'web3';
 
 const Node = {
-    nodeUrl: 'https://testnetv3.matic.network',
-    chainId: 3,
+    nodeUrl: 'https://rpc-mumbai.matic.today',
+    chainId: 80001,
 };
 
-const portis = new Portis('af9218a6-9a1a-475b-95d3-40c96cb81b80', Node);
+const portis = new Portis('50420890-9e26-4e1d-8d95-1c02d245342d', Node);
 const web3 = new Web3(portis.provider);
 
 const swarm = require("swarm-js").at("http://swarm-gateways.net");

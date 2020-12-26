@@ -2,10 +2,10 @@ import Portis from '@portis/web3';
 import Web3 from 'web3';
 
 const Node = {
-	nodeUrl: 'https://testnetv3.matic.network',
-	chainId: 3,
+	nodeUrl: 'https://rpc-mumbai.matic.today',
+	chainId: 80001,
 };
-const portis = new Portis('af9218a6-9a1a-475b-95d3-40c96cb81b80', Node);
+const portis = new Portis('50420890-9e26-4e1d-8d95-1c02d245342d', Node);
 const web3 = new Web3(portis.provider);
 
 const myContractAbi = [
@@ -127,7 +127,7 @@ const myContractAbi = [
 	}
 ];
 
-const myContractAddress = "0x5885030F6C5e6bc6730cE2750d34452aC7BBD334";
+const myContractAddress = "0x995F845b4CC7B7524E9AAef8A6e1c4f698F05fd7";
 const contract = new web3.eth.Contract(myContractAbi, myContractAddress);
 
 export default contract
