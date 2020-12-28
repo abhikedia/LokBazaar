@@ -42,5 +42,19 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "description": "A decentralised marketplace enabling customers purchase products directly from the shopkeeper. The data of seller and customer is kept private and no third party can have access to it. <br/> The traditional centralised marketplace sell their own products and allow authorized businesses or individuals to sell their good on their platform. The established platforms usually have a large stock of goods in the warehouses to quickly deliver an ordered product to the customer. The bad thing about this model is that not everyone benefits from it. The more power they have, the less power there is left to the ordinary customers! Also, there are some serious flaws in the centralized model, both for customers and retailers on the platforms: <br/>",
+  "main": "server.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhikedia/LokBazaar.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abhikedia/LokBazaar/issues"
+  },
+  "homepage": "https://github.com/abhikedia/LokBazaar#readme"
 }
