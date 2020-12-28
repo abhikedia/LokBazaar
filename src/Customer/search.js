@@ -23,7 +23,7 @@ import Grid from '@material-ui/core/Grid';
 import history from '../history'
 import Web3 from 'web3';
 
-const swarm = require("swarm-js").at("http://swarm-gateways.net");
+const swarm = require("swarm-js").at("https://swarm-gateways.net");
 const Node = {
     nodeUrl: 'https://rpc-mumbai.matic.today',
     chainId: 80001,

@@ -23,7 +23,7 @@ const Node = {
 const portis = new Portis('50420890-9e26-4e1d-8d95-1c02d245342d', Node);
 const web3 = new Web3(portis.provider);
 
-const swarm = require("swarm-js").at("http://swarm-gateways.net");
+const swarm = require("swarm-js").at("https://swarm-gateways.net");
 const CryptoJS = require('crypto-js');
 
 function Copyright() {
@@ -91,15 +91,15 @@ export default function SignUp() {
 
     const database = async (e) => {
 
-        var bool = await Contract.methods.sellerRegistrationCheck().call({ from: eth_address });
-        if (!bool) {
-            await Contract.methods.sellerSignup('0x'.concat('', Buffer.from(e).toString('hex'))).send({ from: eth_address })
-                .on('transactionHash', function (hash) { console.log(hash) })
-        }
-        else
-            alert('User Already Registered!')
+        // var bool = await Contract.methods.sellerRegistrationCheck().call({ from: eth_address });
+        // if (!bool) {
+        //     await Contract.methods.sellerSignup('0x'.concat('', Buffer.from(e).toString('hex'))).send({ from: eth_address })
+        //         .on('transactionHash', function (hash) { console.log(hash) })
+        // }
+        // else
+        //     alert('User Already Registered!')
 
-        var url = "http://localhost:4000/addSeller";
+        var url = "sql12.freemysqlhosting.net/addSeller";
         await fetch(url, {
             method: "POST", // or 'PUT'
             mode: "cors",
@@ -114,8 +114,8 @@ export default function SignUp() {
             .then(res => res.body)
             .then(response => {
                 console.log("Success:", JSON.stringify(response))
-                history.push('/sellersignin')
-                window.location.reload()
+                // history.push('/sellersignin')
+                // window.location.reload()
             })
             .catch(error => console.error("Error:", error));
 

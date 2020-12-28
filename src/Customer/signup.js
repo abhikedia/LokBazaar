@@ -22,7 +22,7 @@ const Node = {
 
 const portis = new Portis('50420890-9e26-4e1d-8d95-1c02d245342d', Node);
 const web3 = new Web3(portis.provider);
-const swarm = require("swarm-js").at("http://swarm-gateways.net");
+const swarm = require("swarm-js").at("https://swarm-gateways.net");
 const CryptoJS = require('crypto-js');
 
 function Copyright() {
@@ -86,7 +86,7 @@ export default function SignUp() {
                     console.log(accounts[0])
                 })
         })();
-    },[]);
+    }, []);
 
     const database = async (e) => {
 
@@ -94,7 +94,9 @@ export default function SignUp() {
         if (!bool) {
             console.log('New registration')
             await Contract.methods.customerSignup('0x'.concat('', Buffer.from(e).toString('hex'))).send({ from: eth_address })
-                .on('transactionHash', function (hash) { console.log(hash) })
+                .on('transactionHash', function (hash) {
+                    console.log(hash)
+                })
                 .then(
                     history.push('/signin/'),
                     window.location.reload()

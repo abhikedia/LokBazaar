@@ -4,13 +4,13 @@ var app = express();
 var mysql = require('mysql');
 var bodyParser = require('body-parser');
 var cors = require('cors')
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 
 var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'LokBazaar'
+    host: 'sql12.freemysqlhosting.net',
+    user: 'sql12384136',
+    password: 'Vab9B37LLz',
+    database: 'sql12384136'
 });
 
 connection.connect(function (err) {

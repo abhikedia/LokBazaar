@@ -21,7 +21,7 @@ const Node = {
 
 const portis = new Portis('50420890-9e26-4e1d-8d95-1c02d245342d', Node);
 const web3 = new Web3(portis.provider);
-const swarm = require("swarm-js").at("http://swarm-gateways.net");
+const swarm = require("swarm-js").at("https://swarm-gateways.net");
 const CryptoJS = require('crypto-js');
 
 const useStyles = makeStyles((theme) => ({
