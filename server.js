@@ -1,8 +1,10 @@
 var http = require("http");
+const path = require('path');
 var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var bodyParser = require('body-parser');
+const publicPath = path.join(__dirname, '..', 'public');
 var cors = require('cors')
 const PORT = process.env.PORT || 4000;
 
@@ -26,6 +28,10 @@ app.listen(PORT, () => {
     console.log(`App running on port ${PORT}`);
 });
 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(publicPath, 'index.html'));
+ });
+ 
 
 app.post("/addSeller", function (req, res) {
     var postData = req.body;
